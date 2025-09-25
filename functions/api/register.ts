@@ -70,15 +70,8 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
           'content-type': 'application/json'
         },
         body: JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
-          phone,
-          street,
-          house_number: houseNumber,
-          apartment,
-          postal_code: postalCode,
-          city,
-          state,
+          firstName, lastName, phone,
+          street, houseNumber, apartment, postalCode, city, state,
           country: 'Deutschland'
         })
       });

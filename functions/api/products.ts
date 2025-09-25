@@ -7,13 +7,16 @@ export const onRequestGet: PagesFunction = async ({ env }) => {
       return new Response(JSON.stringify({ error: "Missing SUPABASE envs" }), { status: 500 });
     }
     // Read via REST to avoid ESM import issues in local Miniflare
-    const url = `${SUPABASE_URL}/rest/v1/products?select=id,name,slug,price_cents,active&active=eq.true&order=id`;
+    const url = `${SUPABASE_URL}/rest/v1/products?select=id,name,slug,priceCents,active&active=eq.true&order=id`;
     const res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
     if (!res.ok) {
       const errText = await res.text().catch(() => '');
       return new Response(JSON.stringify({ error: `products fetch failed: ${res.status} ${errText}` }), { status: 500 });
     }
-    const data = await res.json();
+    const rows = await res.json();
+    const data = Array.isArray(rows)
+      ? rows.map((p: any) => ({ ...p, price_cents: p.priceCents }))
+      : [];
 
     return new Response(JSON.stringify({ products: data ?? [] }), {
       headers: { 'content-type': 'application/json' }

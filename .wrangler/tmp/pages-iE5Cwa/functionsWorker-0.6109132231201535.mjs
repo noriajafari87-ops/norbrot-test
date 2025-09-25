@@ -9,14 +9,14 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 
-// ../.wrangler/tmp/bundle-Z1aIST/strip-cf-connecting-ip-header.js
+// ../.wrangler/tmp/bundle-YUU8YO/strip-cf-connecting-ip-header.js
 function stripCfConnectingIPHeader(input, init) {
   const request = new Request(input, init);
   request.headers.delete("CF-Connecting-IP");
   return request;
 }
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-Z1aIST/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-YUU8YO/strip-cf-connecting-ip-header.js"() {
     __name(stripCfConnectingIPHeader, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -158,13 +158,14 @@ var init_products = __esm({
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
           return new Response(JSON.stringify({ error: "Missing SUPABASE envs" }), { status: 500 });
         }
-        const url = `${SUPABASE_URL}/rest/v1/products?select=id,name,slug,price_cents,active&active=eq.true&order=id`;
+        const url = `${SUPABASE_URL}/rest/v1/products?select=id,name,slug,priceCents,active&active=eq.true&order=id`;
         const res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
         if (!res.ok) {
           const errText = await res.text().catch(() => "");
           return new Response(JSON.stringify({ error: `products fetch failed: ${res.status} ${errText}` }), { status: 500 });
         }
-        const data = await res.json();
+        const rows = await res.json();
+        const data = Array.isArray(rows) ? rows.map((p) => ({ ...p, price_cents: p.priceCents })) : [];
         return new Response(JSON.stringify({ products: data ?? [] }), {
           headers: { "content-type": "application/json" }
         });
@@ -259,13 +260,13 @@ var init_register = __esm({
               "content-type": "application/json"
             },
             body: JSON.stringify({
-              first_name: firstName,
-              last_name: lastName,
+              firstName,
+              lastName,
               phone,
               street,
-              house_number: houseNumber,
+              houseNumber,
               apartment,
-              postal_code: postalCode,
+              postalCode,
               city,
               state,
               country: "Deutschland"
@@ -374,11 +375,11 @@ var init_functionsRoutes_0_00735418631797935 = __esm({
   }
 });
 
-// ../.wrangler/tmp/bundle-Z1aIST/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-YUU8YO/middleware-loader.entry.ts
 init_functionsRoutes_0_00735418631797935();
 init_strip_cf_connecting_ip_header();
 
-// ../.wrangler/tmp/bundle-Z1aIST/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-YUU8YO/middleware-insertion-facade.js
 init_functionsRoutes_0_00735418631797935();
 init_strip_cf_connecting_ip_header();
 
@@ -879,7 +880,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-Z1aIST/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-YUU8YO/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -913,7 +914,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-Z1aIST/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-YUU8YO/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
