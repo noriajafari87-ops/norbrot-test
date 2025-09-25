@@ -24,14 +24,20 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
 
     const bodyText = await request.text();
     const body = bodyText ? JSON.parse(bodyText) : {};
-    const {
-      firstName, lastName, phone,
-      street, houseNumber, apartment, postalCode, city, state,
-    } = body || {};
+    const firstName = (body?.firstName || '').toString();
+    const phone = (body?.phone || '').toString();
+    const lastName = (body?.lastName || '').toString();
+    const street = (body?.street || '').toString();
+    const houseNumber = (body?.houseNumber || '').toString();
+    const apartment = (body?.apartment || '').toString();
+    const postalCode = (body?.postalCode || '').toString();
+    const city = (body?.city || '').toString();
+    const state = (body?.state || '').toString();
 
-    if (!firstName || !lastName || !phone || !street || !houseNumber || !postalCode || !city || !state) {
-      return new Response(JSON.stringify({ error: 'All required fields must be provided' }), {
-        status: 400, headers: { 'content-type': 'application/json' }
+    // Only firstName and phone are mandatory
+    if (!firstName || !phone) {
+      return new Response(JSON.stringify({ error: 'firstName and phone are required' }), {
+        status: 400, headers: { 'content-type': 'application/json', ...corsHeaders() }
       });
     }
 

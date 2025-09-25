@@ -9,14 +9,14 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 
-// ../.wrangler/tmp/bundle-AHRUmX/strip-cf-connecting-ip-header.js
+// ../.wrangler/tmp/bundle-yuogIx/strip-cf-connecting-ip-header.js
 function stripCfConnectingIPHeader(input, init) {
   const request = new Request(input, init);
   request.headers.delete("CF-Connecting-IP");
   return request;
 }
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-AHRUmX/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-yuogIx/strip-cf-connecting-ip-header.js"() {
     __name(stripCfConnectingIPHeader, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -216,21 +216,19 @@ var init_register = __esm({
         }
         const bodyText = await request.text();
         const body = bodyText ? JSON.parse(bodyText) : {};
-        const {
-          firstName,
-          lastName,
-          phone,
-          street,
-          houseNumber,
-          apartment,
-          postalCode,
-          city,
-          state
-        } = body || {};
-        if (!firstName || !lastName || !phone || !street || !houseNumber || !postalCode || !city || !state) {
-          return new Response(JSON.stringify({ error: "All required fields must be provided" }), {
+        const firstName = (body?.firstName || "").toString();
+        const phone = (body?.phone || "").toString();
+        const lastName = (body?.lastName || "").toString();
+        const street = (body?.street || "").toString();
+        const houseNumber = (body?.houseNumber || "").toString();
+        const apartment = (body?.apartment || "").toString();
+        const postalCode = (body?.postalCode || "").toString();
+        const city = (body?.city || "").toString();
+        const state = (body?.state || "").toString();
+        if (!firstName || !phone) {
+          return new Response(JSON.stringify({ error: "firstName and phone are required" }), {
             status: 400,
-            headers: { "content-type": "application/json" }
+            headers: { "content-type": "application/json", ...corsHeaders2() }
           });
         }
         const selectUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone`;
@@ -428,11 +426,11 @@ var init_functionsRoutes_0_00735418631797935 = __esm({
   }
 });
 
-// ../.wrangler/tmp/bundle-AHRUmX/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-yuogIx/middleware-loader.entry.ts
 init_functionsRoutes_0_00735418631797935();
 init_strip_cf_connecting_ip_header();
 
-// ../.wrangler/tmp/bundle-AHRUmX/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-yuogIx/middleware-insertion-facade.js
 init_functionsRoutes_0_00735418631797935();
 init_strip_cf_connecting_ip_header();
 
@@ -933,7 +931,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-AHRUmX/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-yuogIx/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -967,7 +965,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-AHRUmX/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-yuogIx/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

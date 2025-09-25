@@ -34,7 +34,7 @@ function stripCfConnectingIPHeader2(input, init) {
 }
 __name(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-AHRUmX/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-yuogIx/strip-cf-connecting-ip-header.js"() {
     __name2(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -227,21 +227,19 @@ var init_register = __esm({
         }
         const bodyText = await request.text();
         const body = bodyText ? JSON.parse(bodyText) : {};
-        const {
-          firstName,
-          lastName,
-          phone,
-          street,
-          houseNumber,
-          apartment,
-          postalCode,
-          city,
-          state
-        } = body || {};
-        if (!firstName || !lastName || !phone || !street || !houseNumber || !postalCode || !city || !state) {
-          return new Response(JSON.stringify({ error: "All required fields must be provided" }), {
+        const firstName = (body?.firstName || "").toString();
+        const phone = (body?.phone || "").toString();
+        const lastName = (body?.lastName || "").toString();
+        const street = (body?.street || "").toString();
+        const houseNumber = (body?.houseNumber || "").toString();
+        const apartment = (body?.apartment || "").toString();
+        const postalCode = (body?.postalCode || "").toString();
+        const city = (body?.city || "").toString();
+        const state = (body?.state || "").toString();
+        if (!firstName || !phone) {
+          return new Response(JSON.stringify({ error: "firstName and phone are required" }), {
             status: 400,
-            headers: { "content-type": "application/json" }
+            headers: { "content-type": "application/json", ...corsHeaders2() }
           });
         }
         const selectUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone`;
