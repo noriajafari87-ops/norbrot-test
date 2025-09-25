@@ -31,7 +31,7 @@
             <h2>Registrierung bei der Bäckerei</h2>
             <p style="text-align: center; margin-bottom: 2rem; color: #666;">Registrieren Sie sich, um Barbari-Brot zu bestellen</p>
             
-            <form id="registerForm">
+            <form id="registerForm" novalidate onsubmit="return false;">
                 <!-- Personal Information -->
                 <h3 style="color: #8B4513; margin-bottom: 1rem; border-bottom: 2px solid #8B4513; padding-bottom: 0.5rem;">Persönliche Informationen</h3>
                 
@@ -105,13 +105,13 @@
                 </div>
                 
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Registrieren und Anmelden</button>
+                <button id="registerBtn" type="button" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Registrieren und Anmelden</button>
             </form>
         </div>
     </div>
 
-    <script src="/dist/languages.js"></script>
-    <script src="/dist/script.js"></script>
+    <script src="/dist/languages.js" defer></script>
+    <script src="/dist/script.js" defer></script>
 </body>
 </html>
 

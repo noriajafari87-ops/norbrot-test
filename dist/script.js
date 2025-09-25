@@ -264,13 +264,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Attach register form handler on homepage
     const registerForm = document.getElementById('registerForm');
+    const registerBtn = document.getElementById('registerBtn');
     if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (validateForm(registerForm)) {
-                handleRegister(registerForm);
+        registerForm.addEventListener('submit', function(e) { e.preventDefault(); });
+    }
+    if (registerForm && registerBtn) {
+        registerBtn.addEventListener('click', async function() {
+            try {
+                const ok = (typeof validateForm === 'function') ? validateForm(registerForm) : true;
+                if (!ok) return;
+                if (typeof handleRegister === 'function') {
+                    await handleRegister(registerForm);
+                } else {
+                    console.error('handleRegister is not defined');
+                    alert('Client error: handler missing');
+                }
+            } catch (err) {
+                console.error('Register click failed:', err);
+                alert('Registration failed: ' + (err && err.message ? err.message : String(err)));
             }
         });
+        console.log('✅ register handler attached');
     }
 
     // Load cart data on checkout page
