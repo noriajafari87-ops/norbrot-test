@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbari-Brot - norbrot</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -62,7 +62,7 @@
                     </div>
                     
                     <!-- Order Button -->
-                    <button class="order-btn-large" onclick="placeOrder()">
+                    <button class="order-btn-large" onclick="openPhoneModal()">
                         <i class="fas fa-check-circle"></i>
                         Bestellung bestätigen
                     </button>
@@ -83,6 +83,19 @@
             <button class="btn btn-success" onclick="closeModal()">
                 <i class="fas fa-times"></i>
                 Schließen
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Phone Modal -->
+    <div id="phoneModal" class="modal" style="display:none;align-items:center;justify-content:center;">
+        <div class="modal-content" style="max-width:420px;margin:auto">
+            <h3 class="success-title" style="margin-bottom:1rem;">Telefonnummer eingeben</h3>
+            <p style="margin-bottom:1rem;color:#555">Wir rufen Sie zur Bestätigung an.</p>
+            <input id="phoneInput" type="tel" placeholder="z.B. +49 123 456" value="+49 " style="width:100%;padding:12px 14px;border:2px solid #8B4513;border-radius:10px;margin-bottom:1rem;font-size:1rem;">
+            <button class="order-btn-large" onclick="submitQuickOrder()" style="width:100%">
+                <i class="fas fa-check"></i>
+                Bestellung absenden
             </button>
         </div>
     </div>
@@ -117,69 +130,38 @@
             }
         }
 
-        function placeOrder() {
+        function openPhoneModal(){
+            document.getElementById('phoneModal').style.display='block';
+            const inp = document.getElementById('phoneInput');
+            if (inp && !inp.value) inp.value = '+49 ';
+        }
+        function closePhoneModal(){ document.getElementById('phoneModal').style.display='none'; }
+
+        function submitQuickOrder(){
+            const phone = (document.getElementById('phoneInput').value||'').trim();
+            if(!phone){ alert('Bitte Telefonnummer eingeben'); return; }
             const totalPrice = currentQuantity * breadPrice;
-            
-            const currentLang = localStorage.getItem('selectedLanguage') || 'de';
-            const t = translations[currentLang] || translations.de;
-            
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert('Please login first');
-                return;
-            }
-            
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            
-            fetch('/api/order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+            fetch('/api/order',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    userId: user.id,
-                    productName: 'Traditionelles Barbari-Brot',
+                    phone,
+                    productName:'Traditionelles Barbari-Brot',
                     quantity: currentQuantity,
                     totalPrice: totalPrice,
                     totalAmount: totalPrice,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    phone: user.phone,
-                    street: user.street,
-                    houseNumber: user.houseNumber,
-                    apartment: user.apartment,
-                    postalCode: user.postalCode,
-                    city: user.city,
-                    state: user.state
+                    firstName:'Kunde'
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    const orderDetails = `
-                        <div class="order-item">
-                            <span><strong>${t.product}:</strong> Traditionelles Barbari-Brot</span>
-                        </div>
-                        <div class="order-item">
-                            <span><strong>${t.quantity}:</strong> ${currentQuantity} ${t.pieces}</span>
-                        </div>
-                        <div class="order-item">
-                            <span><strong>${t.unitPrice}:</strong> ${breadPrice.toFixed(2)} €</span>
-                        </div>
-                        <div class="order-item total-item">
-                            <span><strong>${t.totalPrice}:</strong> ${totalPrice.toFixed(2)} €</span>
-                        </div>
-                    `;
-                    
-                    document.getElementById('orderDetails').innerHTML = orderDetails;
-                    document.getElementById('orderModal').style.display = 'block';
-                } else {
-                    alert('Failed to create order: ' + (data.error || 'unknown error'));
+            }).then(async r=>{ const raw = await r.text(); let payload=null; try{ payload = raw? JSON.parse(raw): null;}catch(e){ payload = { ok: r.ok, error: raw }; } if(!r.ok){ const msg=(payload && (payload.error||payload.message)) || raw || `HTTP ${r.status}`; throw new Error(msg);} return payload||{}; })
+            .then(data=>{
+                if(data && data.ok){
+                    closePhoneModal();
+                    showNotification('Ihre Bestellung wurde registriert. Wir rufen Sie bald an.');
+                }else{
+                    alert('Fehler: '+(data && (data.error||data.message) || 'unknown'));
                 }
-            })
-            .catch(error => {
-                console.error('Order creation error:', error);
-                alert('Failed to create order. Please try again.');
+            }).catch(err=>{
+                alert('Fehler: '+err.message);
             });
         }
 

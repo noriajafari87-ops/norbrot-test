@@ -220,13 +220,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (token && user) {
         // User is already logged in, redirect to products page
-        if (window.location.pathname.includes('auth.html') || window.location.pathname === '/') {
-            window.location.href = '/dist/products';
+        if (window.location.pathname.includes('auth.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/index.html')) {
+            window.location.href = 'products.html';
         }
     } else {
         // User is not logged in, redirect to auth page
-        if (window.location.pathname.includes('/dist/products')) {
-            window.location.href = '/';
+        if (window.location.pathname.includes('/dist/products')) { // legacy path
+            window.location.href = 'index.html';
         }
     }
     
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Attach register form handler on homepage
+    // Attach register form handler on homepagedddd
     const registerForm = document.getElementById('registerForm');
     const registerBtn = document.getElementById('registerBtn');
     if (registerForm) {

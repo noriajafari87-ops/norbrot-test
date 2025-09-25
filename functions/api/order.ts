@@ -1,5 +1,3 @@
-type PagesFunction = (ctx: any) => Promise<Response>;
-
 function corsHeaders() {
   return {
     'access-control-allow-origin': '*',
@@ -8,60 +6,60 @@ function corsHeaders() {
   } as Record<string, string>;
 }
 
-export const onRequestOptions: PagesFunction = async () => {
-  return new Response(null, { status: 204, headers: corsHeaders() });
-};
+export const onRequestOptions = async () => new Response(null, { status: 204, headers: corsHeaders() });
 
-export const onRequestPost: PagesFunction = async ({ request, env }) => {
+export async function onRequestPost({ request, env }: any) {
   try {
-    const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env as any;
+    const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env || {};
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-      return new Response("Missing env", { status: 500 });
+      return json({ ok: false, error: 'Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE' }, 500);
     }
 
-    // Use bundled build for Workers
-    const payload = await request.json();
-    if (!payload?.userId) return new Response("userId required", { status: 400, headers: corsHeaders() });
+    let bodyText = await request.text();
+    const body = bodyText ? JSON.parse(bodyText) : {};
+    const { phone, productName, quantity, totalPrice, totalAmount, firstName } = body || {};
 
-    // Insert via REST to avoid ESM import issues in local Miniflare
-    const insertUrl = `${SUPABASE_URL}/rest/v1/orders?select=*`;
-    const insertRes = await fetch(insertUrl, {
+    if (!phone) {
+      return json({ ok: false, error: 'phone is required' }, 400);
+    }
+
+    // Minimal insert: only phone and order details. userId is optional in DB.
+    const row: Record<string, any> = {
+      phone,
+      productName: productName ?? 'Barbari',
+      quantity: Number(quantity ?? 1),
+      totalPrice: Number(totalPrice ?? 0),
+      totalAmount: Number(totalAmount ?? totalPrice ?? 0),
+      firstName: firstName || 'Kunde'
+    };
+
+    const url = `${SUPABASE_URL}/rest/v1/orders?select=*`;
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
-        apikey: SUPABASE_SERVICE_ROLE,
-        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
-        'content-type': 'application/json'
+        'apikey': SUPABASE_SERVICE_ROLE,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
       },
-      body: JSON.stringify({
-        userId: payload.userId,
-        productName: payload.productName ?? 'Barbari',
-        quantity: payload.quantity ?? 1,
-        totalPrice: payload.totalPrice ?? 0,
-        totalAmount: payload.totalAmount ?? payload.totalPrice ?? 0,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        phone: payload.phone,
-        street: payload.street,
-        houseNumber: payload.houseNumber,
-        apartment: payload.apartment,
-        postalCode: payload.postalCode,
-        city: payload.city,
-        state: payload.state,
-      })
+      body: JSON.stringify(row)
     });
-    if (!insertRes.ok) {
-      const errText = await insertRes.text().catch(() => '');
-      return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500, headers: corsHeaders() });
+
+    const text = await res.text();
+    if (!res.ok) {
+      return json({ ok: false, error: text || res.statusText }, res.status || 500);
     }
-    const createdArr = await insertRes.json();
-    const data = Array.isArray(createdArr) ? createdArr[0] : createdArr;
-
-    return new Response(JSON.stringify({ ok: true, order: data }), {
-      headers: { 'content-type': 'application/json', ...corsHeaders() }
-    });
+    let data: any = null;
+    try { data = text ? JSON.parse(text) : null; } catch (_) { data = null; }
+    return json({ ok: true, data: Array.isArray(data) ? data[0] : data }, 200);
   } catch (e: any) {
-    return new Response(String(e?.message || e), { status: 500, headers: corsHeaders() });
+    return json({ ok: false, error: e?.message || String(e) }, 500);
   }
-};
+}
 
-
+function json(obj: any, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { 'content-type': 'application/json', ...corsHeaders() }
+  });
+}

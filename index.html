@@ -1,118 +1,162 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrierung - norbrot</title>
-    <link rel="stylesheet" href="/dist/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barbari-Brot - norbrot</title>
+
+  <link rel="stylesheet" href="styles.css?v=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <script src="languages.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <i class="fas fa-bread-slice"></i>
-                <span>norbrot</span>
-            </div>
-                <div class="language-switcher">
-                    <button class="lang-btn active" data-lang="de">Deutsch</button>
-                    <button class="lang-btn" data-lang="en">English</button>
-                    <button class="lang-btn" data-lang="tr">Türkçe</button>
-                    <button class="lang-btn" data-lang="fa">فارسی</button>
-                </div>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo"><i class="fas fa-bread-slice"></i><span>norbrot</span></div>
+      <div class="nav-right">
+        <div class="language-switcher">
+          <button class="lang-btn active" data-lang="de">Deutsch</button>
+          <button class="lang-btn" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="tr">Türkçe</button>
+          <button class="lang-btn" data-lang="fa">فارسی</button>
         </div>
-    </nav>
-
-    <!-- Registration Container -->
-    <div class="auth-container">
-        <div class="auth-form">
-            <h2>Registrierung bei der Bäckerei</h2>
-            <p style="text-align: center; margin-bottom: 2rem; color: #666;">Registrieren Sie sich, um Barbari-Brot zu bestellen</p>
-            
-            <form id="registerForm" novalidate onsubmit="return false;">
-                <!-- Personal Information -->
-                <h3 style="color: #8B4513; margin-bottom: 1rem; border-bottom: 2px solid #8B4513; padding-bottom: 0.5rem;">Persönliche Informationen</h3>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstName">Vorname *</label>
-                        <input type="text" id="firstName" name="firstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Nachname</label>
-                        <input type="text" id="lastName" name="lastName">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Telefonnummer *</label>
-                    <input type="tel" id="phone" name="phone" placeholder="+49 123 456 7890" required>
-                </div>
-                
-                <!-- German Address Information -->
-                <h3 style="color: #8B4513; margin: 2rem 0 1rem; border-bottom: 2px solid #8B4513; padding-bottom: 0.5rem;">Adressinformationen Deutschland</h3>
-                
-                <div class="form-group">
-                    <label for="street">Straßenname</label>
-                    <input type="text" id="street" name="street" placeholder="z.B. Hauptstraße">
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="houseNumber">Hausnummer</label>
-                        <input type="text" id="houseNumber" name="houseNumber" placeholder="z.B. 123">
-                    </div>
-                    <div class="form-group">
-                        <label for="apartment">Wohnung/Einheit (optional)</label>
-                        <input type="text" id="apartment" name="apartment" placeholder="z.B. 2A">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="postalCode">Postleitzahl (PLZ)</label>
-                        <input type="text" id="postalCode" name="postalCode" placeholder="z.B. 10115" pattern="[0-9]{5}">
-                    </div>
-                    <div class="form-group">
-                        <label for="city">Stadt</label>
-                        <input type="text" id="city" name="city" placeholder="z.B. Berlin">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="state">Bundesland</label>
-                    <select id="state" name="state">
-                        <option value="">Bundesland auswählen</option>
-                        <option value="Baden-Württemberg">Baden-Württemberg</option>
-                        <option value="Bayern">Bayern</option>
-                        <option value="Berlin">Berlin</option>
-                        <option value="Brandenburg">Brandenburg</option>
-                        <option value="Bremen">Bremen</option>
-                        <option value="Hamburg">Hamburg</option>
-                        <option value="Hessen">Hessen</option>
-                        <option value="Mecklenburg-Vorpommern">Mecklenburg-Vorpommern</option>
-                        <option value="Niedersachsen">Niedersachsen</option>
-                        <option value="Nordrhein-Westfalen">Nordrhein-Westfalen</option>
-                        <option value="Rheinland-Pfalz">Rheinland-Pfalz</option>
-                        <option value="Saarland">Saarland</option>
-                        <option value="Sachsen">Sachsen</option>
-                        <option value="Sachsen-Anhalt">Sachsen-Anhalt</option>
-                        <option value="Schleswig-Holstein">Schleswig-Holstein</option>
-                        <option value="Thüringen">Thüringen</option>
-                    </select>
-                </div>
-                
-                
-                <button id="registerBtn" type="button" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Registrieren und Anmelden</button>
-            </form>
-        </div>
+      </div>
     </div>
+  </nav>
 
-    <script src="/dist/languages.js" defer></script>
-    <script src="/dist/script.js" defer></script>
+  <section class="product-page elderly-friendly page-decor">
+    <div class="container">
+      <h2 class="page-title fancy-title"><span>Frisches Barbari-Brot</span></h2>
+
+      <div class="hero-grid">
+        <!-- Left: Single Image -->
+        <div class="gallery card-3d image-elevated">
+          <span class="ribbon ribbon-new"><i class="fas fa-star"></i> Neu</span>
+          <div class="gallery-main">
+            <img id="mainImage" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Barbari-Brot" class="gallery-img"/>
+            <span class="shine"></span>
+          </div>
+        </div>
+
+        <!-- Right: Order Panel -->
+        <div class="order-panel details-glass">
+          <div class="order-header-ui">
+            <div class="price-chip">Preis: <strong>3,50 €</strong></div>
+            <div class="stock-chip"><i class="fas fa-check"></i> Heute verfügbar</div>
+          </div>
+
+          <ul class="usp-list">
+            <li><i class="fas fa-bread-slice"></i> Handgemacht, knusprig außen – weich innen</li>
+            <li><i class="fas fa-leaf"></i> Ohne Zusatzstoffe</li>
+            <li><i class="fas fa-clock"></i> Ofenfrisch am selben Tag</li>
+          </ul>
+
+          <div class="quantity-section-large">
+            <label for="quantity" class="quantity-label-large">Anzahl:</label>
+            <div class="quantity-controls-large">
+              <button type="button" class="quantity-btn-large" onclick="decreaseQuantity()">-</button>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly class="quantity-input-large" />
+              <button type="button" class="quantity-btn-large" onclick="increaseQuantity()">+</button>
+            </div>
+          </div>
+
+          <div class="total-display-large total-card">
+            <span class="total-label">Gesamt:</span>
+            <span class="total-amount" id="totalAmount">3,50 €</span>
+          </div>
+
+          <button class="order-btn-large cta-pulse" onclick="openPhoneModal()">
+            <i class="fas fa-check-circle"></i>Bestellung bestätigen
+          </button>
+
+          <div class="policy-note"><i class="fas fa-shield-alt"></i> Bezahlung bei Lieferung</div>
+        </div>
+      </div>
+
+      <div class="trust-badges">
+        <div class="badge"><i class="fas fa-bread-slice"></i><span>Frisch gebacken</span></div>
+        <div class="badge"><i class="fas fa-leaf"></i><span>Naturliche Zutaten</span></div>
+        <div class="badge"><i class="fas fa-truck"></i><span>Schnelle Lieferung</span></div>
+        <div class="badge"><i class="fas fa-shield-alt"></i><span>Bezahlung bei Lieferung</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Phone Modal -->
+  <div id="phoneModal" class="modal" style="display:none;align-items:center;justify-content:center;">
+    <div class="modal-content phone-modal">
+      <div class="modal-header-ui">
+        <h3 class="success-title">Telefonnummer eingeben</h3>
+        <button class="close-btn-ui" onclick="closePhoneModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <p class="modal-desc">Wir rufen Sie zur Bestätigung an.</p>
+      <div class="phone-input-wrap">
+        <i class="fas fa-phone"></i>
+        <input id="phoneInput" type="tel" placeholder="z.B. +49 123 456" value="+49 ">
+      </div>
+      <button class="order-btn-large cta-pulse" onclick="submitQuickOrder()" style="width:100%">
+        <i class="fas fa-check"></i>Bestellung absenden
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let currentQuantity = 1;
+    const breadPrice = 3.50;
+
+    function increaseQuantity(){ if(currentQuantity<10){ currentQuantity++; document.getElementById('quantity').value=currentQuantity; updateTotal(); } }
+    function decreaseQuantity(){ if(currentQuantity>1){ currentQuantity--; document.getElementById('quantity').value=currentQuantity; updateTotal(); } }
+    function updateTotal(){ const total = currentQuantity * breadPrice; const el = document.getElementById('totalAmount'); if(el){ el.textContent = total.toFixed(2).replace('.', ',') + ' €'; } }
+    document.addEventListener('DOMContentLoaded', updateTotal);
+
+    function openPhoneModal(){ document.getElementById('phoneModal').style.display='block'; }
+    function closePhoneModal(){ document.getElementById('phoneModal').style.display='none'; }
+
+    function submitQuickOrder(){
+      const phone = (document.getElementById('phoneInput').value||'').trim();
+      if(!phone){ alert('Bitte Telefonnummer eingeben'); return; }
+      const totalPrice = currentQuantity * breadPrice;
+
+      fetch('/api/order', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          phone,
+          productName:'Traditionelles Barbari-Brot',
+          quantity: currentQuantity,
+          totalPrice,
+          totalAmount: totalPrice,
+          firstName:'Kunde'
+        })
+      })
+      .then(async r=>{
+        const raw = await r.text();
+        let payload = null;
+        try { payload = raw ? JSON.parse(raw) : null; } catch(e){ payload = { ok: r.ok, error: raw }; }
+        if(!r.ok){ const msg = (payload && (payload.error||payload.message)) || raw || `HTTP ${r.status}`; throw new Error(msg);}
+        return payload || { ok:true };
+      })
+      .then(data=>{
+        if(data && data.ok){
+          closePhoneModal();
+          if(typeof showNotification==='function'){
+            showNotification('Ihre Bestellung wurde registriert. Wir rufen Sie bald an.');
+          } else {
+            alert('Bestellung registriert.');
+          }
+        } else {
+          alert('Fehler: '+(data && (data.error||data.message) || 'unknown'));
+        }
+      })
+      .catch(err=> alert('Fehler: '+err.message));
+    }
+
+    window.onclick = function(ev){
+      const m=document.getElementById('phoneModal');
+      if(ev.target===m){ m.style.display='none'; }
+    }
+  </script>
 </body>
 </html>
-
-

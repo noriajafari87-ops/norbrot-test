@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// .wrangler/tmp/bundle-N8hnUB/strip-cf-connecting-ip-header.js
+// .wrangler/tmp/bundle-hsRUxQ/strip-cf-connecting-ip-header.js
 function stripCfConnectingIPHeader(input, init) {
   const request = new Request(input, init);
   request.headers.delete("CF-Connecting-IP");
@@ -16,7 +16,7 @@ globalThis.fetch = new Proxy(globalThis.fetch, {
   }
 });
 
-// .wrangler/tmp/pages-iE5Cwa/functionsWorker-0.6109132231201535.mjs
+// .wrangler/tmp/pages-L1RPw6/functionsWorker-0.12851137439493443.mjs
 var __defProp2 = Object.defineProperty;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
@@ -34,7 +34,7 @@ function stripCfConnectingIPHeader2(input, init) {
 }
 __name(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-yuogIx/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-pYZg0Q/strip-cf-connecting-ip-header.js"() {
     __name2(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -45,39 +45,120 @@ var init_strip_cf_connecting_ip_header = __esm({
     });
   }
 });
-function verifyToken(token) {
-  if (!token)
-    return null;
-  try {
-    const decoded = JSON.parse(atob(token));
-    return decoded.userId || null;
-  } catch {
-    return null;
-  }
+function corsHeaders() {
+  return {
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "authorization,content-type"
+  };
 }
-__name(verifyToken, "verifyToken");
+__name(corsHeaders, "corsHeaders");
+var onRequestOptions;
 var onRequestGet;
+var init_database = __esm({
+  "api/admin/database.ts"() {
+    init_functionsRoutes_0_8230824413548834();
+    init_strip_cf_connecting_ip_header();
+    __name2(corsHeaders, "corsHeaders");
+    onRequestOptions = /* @__PURE__ */ __name2(async () => {
+      return new Response(null, { status: 204, headers: corsHeaders() });
+    }, "onRequestOptions");
+    onRequestGet = /* @__PURE__ */ __name2(async ({ request, env }) => {
+      try {
+        const auth = request.headers.get("authorization") || "";
+        if (!auth.startsWith("Bearer ")) {
+          return new Response(JSON.stringify({ success: false, error: "unauthorized" }), { status: 401, headers: { "content-type": "application/json", ...corsHeaders() } });
+        }
+        const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
+        if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+          return new Response(JSON.stringify({ success: false, error: "Missing env" }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders() } });
+        }
+        const [usersRes, ordersRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}/rest/v1/users?select=*`, { headers: { apikey: SUPABASE_SERVICE_ROLE, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}` } }),
+          fetch(`${SUPABASE_URL}/rest/v1/orders?select=*`, { headers: { apikey: SUPABASE_SERVICE_ROLE, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}` } })
+        ]);
+        const users = usersRes.ok ? await usersRes.json() : [];
+        const orders = ordersRes.ok ? await ordersRes.json() : [];
+        return new Response(JSON.stringify({ success: true, totalUsers: users.length, totalOrders: orders.length, users, orders }), {
+          headers: { "content-type": "application/json", ...corsHeaders() }
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ success: false, error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders() } });
+      }
+    }, "onRequestGet");
+  }
+});
+function corsHeaders2() {
+  return {
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "authorization,content-type"
+  };
+}
+__name(corsHeaders2, "corsHeaders2");
+var onRequestOptions2;
+var onRequestPost;
+var init_mark_delivered = __esm({
+  "api/admin/mark-delivered.ts"() {
+    init_functionsRoutes_0_8230824413548834();
+    init_strip_cf_connecting_ip_header();
+    __name2(corsHeaders2, "corsHeaders");
+    onRequestOptions2 = /* @__PURE__ */ __name2(async () => {
+      return new Response(null, { status: 204, headers: corsHeaders2() });
+    }, "onRequestOptions");
+    onRequestPost = /* @__PURE__ */ __name2(async ({ request, env }) => {
+      try {
+        const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
+        if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+          return new Response(JSON.stringify({ success: false, error: "Missing env" }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
+        }
+        const bodyText = await request.text();
+        const body = bodyText ? JSON.parse(bodyText) : {};
+        const orderId = Number(body?.orderId);
+        if (!orderId) {
+          return new Response(JSON.stringify({ success: false, error: "orderId required" }), { status: 400, headers: { "content-type": "application/json", ...corsHeaders2() } });
+        }
+        const url = `${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}`;
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: {
+            apikey: SUPABASE_SERVICE_ROLE,
+            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+            "content-type": "application/json",
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify({ status: "delivered" })
+        });
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          return new Response(JSON.stringify({ success: false, error: `update failed: ${res.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
+        }
+        const updated = await res.json();
+        return new Response(JSON.stringify({ success: true, order: Array.isArray(updated) ? updated[0] : updated }), { headers: { "content-type": "application/json", ...corsHeaders2() } });
+      } catch (e) {
+        return new Response(JSON.stringify({ success: false, error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
+      }
+    }, "onRequestPost");
+  }
+});
+var onRequestGet2;
 var init_status = __esm({
   "api/auth/status.ts"() {
-    init_functionsRoutes_0_00735418631797935();
+    init_functionsRoutes_0_8230824413548834();
     init_strip_cf_connecting_ip_header();
-    __name2(verifyToken, "verifyToken");
-    onRequestGet = /* @__PURE__ */ __name2(async ({ request }) => {
-      const auth = request.headers.get("authorization");
-      const token = auth?.replace("Bearer ", "") || null;
-      const userId = verifyToken(token);
-      return new Response(JSON.stringify({ authenticated: !!userId, userId: userId || void 0 }), {
+    onRequestGet2 = /* @__PURE__ */ __name2(async () => {
+      return new Response(JSON.stringify({ authenticated: false }), {
         headers: { "content-type": "application/json" }
       });
     }, "onRequestGet");
   }
 });
-var onRequestGet2;
+var onRequestGet3;
 var init_debug_env = __esm({
   "api/debug-env.ts"() {
-    init_functionsRoutes_0_00735418631797935();
+    init_functionsRoutes_0_8230824413548834();
     init_strip_cf_connecting_ip_header();
-    onRequestGet2 = /* @__PURE__ */ __name2(async ({ env }) => {
+    onRequestGet3 = /* @__PURE__ */ __name2(async ({ env }) => {
       const data = {
         hasUrl: !!env?.SUPABASE_URL,
         hasAnon: !!env?.SUPABASE_ANON_KEY,
@@ -89,93 +170,99 @@ var init_debug_env = __esm({
 });
 var order_exports = {};
 __export(order_exports, {
-  onRequestOptions: () => onRequestOptions,
-  onRequestPost: () => onRequestPost
+  onRequestOptions: () => onRequestOptions3,
+  onRequestPost: () => onRequestPost2
 });
-function corsHeaders() {
+function corsHeaders3() {
   return {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
     "access-control-allow-headers": "authorization,content-type"
   };
 }
-__name(corsHeaders, "corsHeaders");
-var onRequestOptions;
-var onRequestPost;
+__name(corsHeaders3, "corsHeaders3");
+async function onRequestPost2({ request, env }) {
+  try {
+    const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env || {};
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+      return json({ ok: false, error: "Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE" }, 500);
+    }
+    let bodyText = await request.text();
+    const body = bodyText ? JSON.parse(bodyText) : {};
+    const { phone, productName, quantity, totalPrice, totalAmount, firstName } = body || {};
+    if (!phone) {
+      return json({ ok: false, error: "phone is required" }, 400);
+    }
+    const row = {
+      phone,
+      productName: productName ?? "Barbari",
+      quantity: Number(quantity ?? 1),
+      totalPrice: Number(totalPrice ?? 0),
+      totalAmount: Number(totalAmount ?? totalPrice ?? 0),
+      firstName: firstName || "Kunde"
+    };
+    const url = `${SUPABASE_URL}/rest/v1/orders?select=*`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_SERVICE_ROLE,
+        "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(row)
+    });
+    const text = await res.text();
+    if (!res.ok) {
+      return json({ ok: false, error: text || res.statusText }, res.status || 500);
+    }
+    let data = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch (_) {
+      data = null;
+    }
+    return json({ ok: true, data: Array.isArray(data) ? data[0] : data }, 200);
+  } catch (e) {
+    return json({ ok: false, error: e?.message || String(e) }, 500);
+  }
+}
+__name(onRequestPost2, "onRequestPost2");
+function json(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { "content-type": "application/json", ...corsHeaders3() }
+  });
+}
+__name(json, "json");
+var onRequestOptions3;
 var init_order = __esm({
   "api/order.ts"() {
-    init_functionsRoutes_0_00735418631797935();
+    init_functionsRoutes_0_8230824413548834();
     init_strip_cf_connecting_ip_header();
-    __name2(corsHeaders, "corsHeaders");
-    onRequestOptions = /* @__PURE__ */ __name2(async () => {
-      return new Response(null, { status: 204, headers: corsHeaders() });
-    }, "onRequestOptions");
-    onRequestPost = /* @__PURE__ */ __name2(async ({ request, env }) => {
-      try {
-        const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
-        if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-          return new Response("Missing env", { status: 500 });
-        }
-        const payload = await request.json();
-        if (!payload?.userId)
-          return new Response("userId required", { status: 400, headers: corsHeaders() });
-        const insertUrl = `${SUPABASE_URL}/rest/v1/orders?select=*`;
-        const insertRes = await fetch(insertUrl, {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_SERVICE_ROLE,
-            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
-            "content-type": "application/json"
-          },
-          body: JSON.stringify({
-            userId: payload.userId,
-            productName: payload.productName ?? "Barbari",
-            quantity: payload.quantity ?? 1,
-            totalPrice: payload.totalPrice ?? 0,
-            totalAmount: payload.totalAmount ?? payload.totalPrice ?? 0,
-            firstName: payload.firstName,
-            lastName: payload.lastName,
-            phone: payload.phone,
-            street: payload.street,
-            houseNumber: payload.houseNumber,
-            apartment: payload.apartment,
-            postalCode: payload.postalCode,
-            city: payload.city,
-            state: payload.state
-          })
-        });
-        if (!insertRes.ok) {
-          const errText = await insertRes.text().catch(() => "");
-          return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500, headers: corsHeaders() });
-        }
-        const createdArr = await insertRes.json();
-        const data = Array.isArray(createdArr) ? createdArr[0] : createdArr;
-        return new Response(JSON.stringify({ ok: true, order: data }), {
-          headers: { "content-type": "application/json", ...corsHeaders() }
-        });
-      } catch (e) {
-        return new Response(String(e?.message || e), { status: 500, headers: corsHeaders() });
-      }
-    }, "onRequestPost");
+    __name2(corsHeaders3, "corsHeaders");
+    onRequestOptions3 = /* @__PURE__ */ __name2(async () => new Response(null, { status: 204, headers: corsHeaders3() }), "onRequestOptions");
+    __name2(onRequestPost2, "onRequestPost");
+    __name2(json, "json");
   }
 });
-var onRequestPost2;
+var onRequestPost3;
 var init_orders = __esm({
   "api/orders.ts"() {
-    init_functionsRoutes_0_00735418631797935();
+    init_functionsRoutes_0_8230824413548834();
     init_strip_cf_connecting_ip_header();
-    onRequestPost2 = /* @__PURE__ */ __name2(async ({ request, env }) => {
+    onRequestPost3 = /* @__PURE__ */ __name2(async ({ request, env }) => {
       const mod = await Promise.resolve().then(() => (init_order(), order_exports));
       return mod.onRequestPost({ request, env });
     }, "onRequestPost");
   }
 });
-var onRequestGet3;
+var onRequestGet4;
 var init_products = __esm({
   "api/products.ts"() {
-    init_functionsRoutes_0_00735418631797935();
+    init_functionsRoutes_0_8230824413548834();
     init_strip_cf_connecting_ip_header();
-    onRequestGet3 = /* @__PURE__ */ __name2(async ({ env }) => {
+    onRequestGet4 = /* @__PURE__ */ __name2(async ({ env }) => {
       try {
         const { SUPABASE_URL, SUPABASE_ANON_KEY } = env;
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -198,31 +285,31 @@ var init_products = __esm({
     }, "onRequestGet");
   }
 });
-function corsHeaders2() {
+function corsHeaders4() {
   return {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
     "access-control-allow-headers": "authorization,content-type"
   };
 }
-__name(corsHeaders2, "corsHeaders2");
-var onRequestOptions2;
-var onRequestPost3;
+__name(corsHeaders4, "corsHeaders4");
+var onRequestOptions4;
+var onRequestPost4;
 var init_register = __esm({
   "api/register.ts"() {
-    init_functionsRoutes_0_00735418631797935();
+    init_functionsRoutes_0_8230824413548834();
     init_strip_cf_connecting_ip_header();
-    __name2(corsHeaders2, "corsHeaders");
-    onRequestOptions2 = /* @__PURE__ */ __name2(async () => {
-      return new Response(null, { status: 204, headers: corsHeaders2() });
+    __name2(corsHeaders4, "corsHeaders");
+    onRequestOptions4 = /* @__PURE__ */ __name2(async () => {
+      return new Response(null, { status: 204, headers: corsHeaders4() });
     }, "onRequestOptions");
-    onRequestPost3 = /* @__PURE__ */ __name2(async ({ request, env }) => {
+    onRequestPost4 = /* @__PURE__ */ __name2(async ({ request, env }) => {
       try {
         const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
         if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
           return new Response(JSON.stringify({ error: "Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE" }), {
             status: 500,
-            headers: { "content-type": "application/json", ...corsHeaders2() }
+            headers: { "content-type": "application/json", ...corsHeaders4() }
           });
         }
         const bodyText = await request.text();
@@ -239,7 +326,7 @@ var init_register = __esm({
         if (!firstName || !phone) {
           return new Response(JSON.stringify({ error: "firstName and phone are required" }), {
             status: 400,
-            headers: { "content-type": "application/json", ...corsHeaders2() }
+            headers: { "content-type": "application/json", ...corsHeaders4() }
           });
         }
         const selectUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone`;
@@ -252,7 +339,7 @@ var init_register = __esm({
         });
         if (!selectRes.ok) {
           const errText = await selectRes.text().catch(() => "");
-          return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
+          return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders4() } });
         }
         const selectRaw = await selectRes.text();
         const existingArr = selectRaw ? JSON.parse(selectRaw) : [];
@@ -310,7 +397,7 @@ var init_register = __esm({
           });
           if (!insertResSnake.ok) {
             const errText2 = await insertResSnake.text().catch(() => "");
-            return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
+            return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders4() } });
           }
           const rawSnake = await insertResSnake.text();
           const createdArrSnake = rawSnake ? JSON.parse(rawSnake) : [];
@@ -334,28 +421,20 @@ var init_register = __esm({
           message: "User registered successfully",
           token,
           user: created
-        }), { headers: { "content-type": "application/json", ...corsHeaders2() } });
+        }), { headers: { "content-type": "application/json", ...corsHeaders4() } });
       } catch (e) {
-        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
+        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders4() } });
       }
     }, "onRequestPost");
   }
 });
-var onRequestGet4;
-var init_ping = __esm({
-  "ping.ts"() {
-    init_functionsRoutes_0_00735418631797935();
-    init_strip_cf_connecting_ip_header();
-    onRequestGet4 = /* @__PURE__ */ __name2(async () => {
-      return new Response("ok", {
-        headers: { "content-type": "text/plain; charset=utf-8" }
-      });
-    }, "onRequestGet");
-  }
-});
 var routes;
-var init_functionsRoutes_0_00735418631797935 = __esm({
-  "../.wrangler/tmp/pages-iE5Cwa/functionsRoutes-0.00735418631797935.mjs"() {
+var init_functionsRoutes_0_8230824413548834 = __esm({
+  "../.wrangler/tmp/pages-L1RPw6/functionsRoutes-0.8230824413548834.mjs"() {
+    init_database();
+    init_database();
+    init_mark_delivered();
+    init_mark_delivered();
     init_status();
     init_debug_env();
     init_order();
@@ -364,81 +443,101 @@ var init_functionsRoutes_0_00735418631797935 = __esm({
     init_products();
     init_register();
     init_register();
-    init_ping();
     routes = [
+      {
+        routePath: "/api/admin/database",
+        mountPath: "/api/admin",
+        method: "GET",
+        middlewares: [],
+        modules: [onRequestGet]
+      },
+      {
+        routePath: "/api/admin/database",
+        mountPath: "/api/admin",
+        method: "OPTIONS",
+        middlewares: [],
+        modules: [onRequestOptions]
+      },
+      {
+        routePath: "/api/admin/mark-delivered",
+        mountPath: "/api/admin",
+        method: "OPTIONS",
+        middlewares: [],
+        modules: [onRequestOptions2]
+      },
+      {
+        routePath: "/api/admin/mark-delivered",
+        mountPath: "/api/admin",
+        method: "POST",
+        middlewares: [],
+        modules: [onRequestPost]
+      },
       {
         routePath: "/api/auth/status",
         mountPath: "/api/auth",
         method: "GET",
         middlewares: [],
-        modules: [onRequestGet]
+        modules: [onRequestGet2]
       },
       {
         routePath: "/api/debug-env",
         mountPath: "/api",
         method: "GET",
         middlewares: [],
-        modules: [onRequestGet2]
+        modules: [onRequestGet3]
       },
       {
         routePath: "/api/order",
         mountPath: "/api",
         method: "OPTIONS",
         middlewares: [],
-        modules: [onRequestOptions]
+        modules: [onRequestOptions3]
       },
       {
         routePath: "/api/order",
-        mountPath: "/api",
-        method: "POST",
-        middlewares: [],
-        modules: [onRequestPost]
-      },
-      {
-        routePath: "/api/orders",
         mountPath: "/api",
         method: "POST",
         middlewares: [],
         modules: [onRequestPost2]
       },
       {
-        routePath: "/api/products",
-        mountPath: "/api",
-        method: "GET",
-        middlewares: [],
-        modules: [onRequestGet3]
-      },
-      {
-        routePath: "/api/register",
-        mountPath: "/api",
-        method: "OPTIONS",
-        middlewares: [],
-        modules: [onRequestOptions2]
-      },
-      {
-        routePath: "/api/register",
+        routePath: "/api/orders",
         mountPath: "/api",
         method: "POST",
         middlewares: [],
         modules: [onRequestPost3]
       },
       {
-        routePath: "/ping",
-        mountPath: "/",
+        routePath: "/api/products",
+        mountPath: "/api",
         method: "GET",
         middlewares: [],
         modules: [onRequestGet4]
+      },
+      {
+        routePath: "/api/register",
+        mountPath: "/api",
+        method: "OPTIONS",
+        middlewares: [],
+        modules: [onRequestOptions4]
+      },
+      {
+        routePath: "/api/register",
+        mountPath: "/api",
+        method: "POST",
+        middlewares: [],
+        modules: [onRequestPost4]
       }
     ];
   }
 });
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
 function lexer(str) {
   var tokens = [];
@@ -894,7 +993,7 @@ var cloneResponse = /* @__PURE__ */ __name2((response) => (
     response
   )
 ), "cloneResponse");
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
 var drainBody = /* @__PURE__ */ __name2(async (request, env, _ctx, middlewareCtx) => {
   try {
@@ -912,7 +1011,7 @@ var drainBody = /* @__PURE__ */ __name2(async (request, env, _ctx, middlewareCtx
   }
 }, "drainBody");
 var middleware_ensure_req_body_drained_default = drainBody;
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
 function reduceError(e) {
   return {
@@ -941,7 +1040,7 @@ var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_miniflare3_json_error_default
 ];
 var middleware_insertion_facade_default = pages_template_worker_default;
-init_functionsRoutes_0_00735418631797935();
+init_functionsRoutes_0_8230824413548834();
 init_strip_cf_connecting_ip_header();
 var __facade_middleware__ = [];
 function __facade_register__(...args) {
@@ -1106,7 +1205,7 @@ var jsonError2 = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx
 }, "jsonError");
 var middleware_miniflare3_json_error_default2 = jsonError2;
 
-// .wrangler/tmp/bundle-N8hnUB/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-hsRUxQ/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__2 = [
   middleware_ensure_req_body_drained_default2,
   middleware_miniflare3_json_error_default2
@@ -1138,7 +1237,7 @@ function __facade_invoke__2(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__2, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-N8hnUB/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-hsRUxQ/middleware-loader.entry.ts
 var __Facade_ScheduledController__2 = class {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
@@ -1236,4 +1335,4 @@ export {
   __INTERNAL_WRANGLER_MIDDLEWARE__2 as __INTERNAL_WRANGLER_MIDDLEWARE__,
   middleware_loader_entry_default2 as default
 };
-//# sourceMappingURL=functionsWorker-0.6109132231201535.js.map
+//# sourceMappingURL=functionsWorker-0.12851137439493443.js.map
