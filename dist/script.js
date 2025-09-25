@@ -56,14 +56,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Form validation
 function validateForm(form) {
-    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
     let isValid = true;
-
-    inputs.forEach(input => {
-        if (!input.value.trim()) {
+    const requiredIds = ['firstName', 'phone'];
+    requiredIds.forEach(id => {
+        const input = form.querySelector(`#${id}`);
+        if (input && !String(input.value || '').trim()) {
             input.style.borderColor = '#e74c3c';
             isValid = false;
-        } else {
+        } else if (input) {
             input.style.borderColor = '#ddd';
         }
     });
@@ -326,15 +326,15 @@ function loadCheckoutData() {
 function handleRegister(form) {
     const formData = new FormData(form);
     const registerData = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        phone: formData.get('phone'),
-        street: formData.get('street'),
-        houseNumber: formData.get('houseNumber'),
-        apartment: formData.get('apartment'),
-        postalCode: formData.get('postalCode'),
-        city: formData.get('city'),
-        state: formData.get('state')
+        firstName: formData.get('firstName') || '',
+        lastName: formData.get('lastName') || '',
+        phone: formData.get('phone') || '',
+        street: formData.get('street') || '',
+        houseNumber: formData.get('houseNumber') || '',
+        apartment: formData.get('apartment') || '',
+        postalCode: formData.get('postalCode') || '',
+        city: formData.get('city') || '',
+        state: formData.get('state') || ''
     };
 
     console.log('Sending registration data:', registerData);

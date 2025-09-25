@@ -34,7 +34,7 @@ function stripCfConnectingIPHeader2(input, init) {
 }
 __name(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-coPGLA/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-AHRUmX/strip-cf-connecting-ip-header.js"() {
     __name2(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -49,7 +49,7 @@ function verifyToken(token) {
   if (!token)
     return null;
   try {
-    const decoded = JSON.parse(Buffer.from(token, "base64").toString());
+    const decoded = JSON.parse(atob(token));
     return decoded.userId || null;
   } catch {
     return null;

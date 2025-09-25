@@ -3,7 +3,7 @@ type PagesFunction = (ctx: any) => Promise<Response>;
 function verifyToken(token: string | null): number | null {
   if (!token) return null;
   try {
-    const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
+    const decoded = JSON.parse(atob(token));
     return decoded.userId || null;
   } catch {
     return null;
