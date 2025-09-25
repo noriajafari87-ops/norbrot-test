@@ -1,8 +1,10 @@
 import { onRequestGet as __api_auth_status_ts_onRequestGet } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\auth\\status.ts"
 import { onRequestGet as __api_debug_env_ts_onRequestGet } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\debug-env.ts"
+import { onRequestOptions as __api_order_ts_onRequestOptions } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\order.ts"
 import { onRequestPost as __api_order_ts_onRequestPost } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\order.ts"
 import { onRequestPost as __api_orders_ts_onRequestPost } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\orders.ts"
 import { onRequestGet as __api_products_ts_onRequestGet } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\products.ts"
+import { onRequestOptions as __api_register_ts_onRequestOptions } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\register.ts"
 import { onRequestPost as __api_register_ts_onRequestPost } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\api\\register.ts"
 import { onRequestGet as __ping_ts_onRequestGet } from "C:\\Users\\azizo\\OneDrive\\Desktop\\norbrot-test\\functions\\ping.ts"
 
@@ -24,6 +26,13 @@ export const routes = [
   {
       routePath: "/api/order",
       mountPath: "/api",
+      method: "OPTIONS",
+      middlewares: [],
+      modules: [__api_order_ts_onRequestOptions],
+    },
+  {
+      routePath: "/api/order",
+      mountPath: "/api",
       method: "POST",
       middlewares: [],
       modules: [__api_order_ts_onRequestPost],
@@ -41,6 +50,13 @@ export const routes = [
       method: "GET",
       middlewares: [],
       modules: [__api_products_ts_onRequestGet],
+    },
+  {
+      routePath: "/api/register",
+      mountPath: "/api",
+      method: "OPTIONS",
+      middlewares: [],
+      modules: [__api_register_ts_onRequestOptions],
     },
   {
       routePath: "/api/register",

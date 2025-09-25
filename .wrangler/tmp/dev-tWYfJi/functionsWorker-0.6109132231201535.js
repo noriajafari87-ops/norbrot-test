@@ -34,7 +34,7 @@ function stripCfConnectingIPHeader2(input, init) {
 }
 __name(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-YUU8YO/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-bocoAu/strip-cf-connecting-ip-header.js"() {
     __name2(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -89,13 +89,27 @@ var init_debug_env = __esm({
 });
 var order_exports = {};
 __export(order_exports, {
+  onRequestOptions: () => onRequestOptions,
   onRequestPost: () => onRequestPost
 });
+function corsHeaders() {
+  return {
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "authorization,content-type"
+  };
+}
+__name(corsHeaders, "corsHeaders");
+var onRequestOptions;
 var onRequestPost;
 var init_order = __esm({
   "api/order.ts"() {
     init_functionsRoutes_0_00735418631797935();
     init_strip_cf_connecting_ip_header();
+    __name2(corsHeaders, "corsHeaders");
+    onRequestOptions = /* @__PURE__ */ __name2(async () => {
+      return new Response(null, { status: 204, headers: corsHeaders() });
+    }, "onRequestOptions");
     onRequestPost = /* @__PURE__ */ __name2(async ({ request, env }) => {
       try {
         const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
@@ -104,7 +118,7 @@ var init_order = __esm({
         }
         const payload = await request.json();
         if (!payload?.userId)
-          return new Response("userId required", { status: 400 });
+          return new Response("userId required", { status: 400, headers: corsHeaders() });
         const insertUrl = `${SUPABASE_URL}/rest/v1/orders?select=*`;
         const insertRes = await fetch(insertUrl, {
           method: "POST",
@@ -132,15 +146,15 @@ var init_order = __esm({
         });
         if (!insertRes.ok) {
           const errText = await insertRes.text().catch(() => "");
-          return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500 });
+          return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500, headers: corsHeaders() });
         }
         const createdArr = await insertRes.json();
         const data = Array.isArray(createdArr) ? createdArr[0] : createdArr;
         return new Response(JSON.stringify({ ok: true, order: data }), {
-          headers: { "content-type": "application/json" }
+          headers: { "content-type": "application/json", ...corsHeaders() }
         });
       } catch (e) {
-        return new Response(String(e?.message || e), { status: 500 });
+        return new Response(String(e?.message || e), { status: 500, headers: corsHeaders() });
       }
     }, "onRequestPost");
   }
@@ -176,26 +190,39 @@ var init_products = __esm({
         const rows = await res.json();
         const data = Array.isArray(rows) ? rows.map((p) => ({ ...p, price_cents: p.priceCents })) : [];
         return new Response(JSON.stringify({ products: data ?? [] }), {
-          headers: { "content-type": "application/json" }
+          headers: { "content-type": "application/json", "access-control-allow-origin": "*" }
         });
       } catch (e) {
-        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500 });
+        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { "access-control-allow-origin": "*" } });
       }
     }, "onRequestGet");
   }
 });
+function corsHeaders2() {
+  return {
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "authorization,content-type"
+  };
+}
+__name(corsHeaders2, "corsHeaders2");
+var onRequestOptions2;
 var onRequestPost3;
 var init_register = __esm({
   "api/register.ts"() {
     init_functionsRoutes_0_00735418631797935();
     init_strip_cf_connecting_ip_header();
+    __name2(corsHeaders2, "corsHeaders");
+    onRequestOptions2 = /* @__PURE__ */ __name2(async () => {
+      return new Response(null, { status: 204, headers: corsHeaders2() });
+    }, "onRequestOptions");
     onRequestPost3 = /* @__PURE__ */ __name2(async ({ request, env }) => {
       try {
         const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
         if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
           return new Response(JSON.stringify({ error: "Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE" }), {
             status: 500,
-            headers: { "content-type": "application/json" }
+            headers: { "content-type": "application/json", ...corsHeaders2() }
           });
         }
         const body = await request.json();
@@ -226,7 +253,7 @@ var init_register = __esm({
         });
         if (!selectRes.ok) {
           const errText = await selectRes.text().catch(() => "");
-          return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json" } });
+          return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
         }
         const existingArr = await selectRes.json();
         if (Array.isArray(existingArr) && existingArr.length > 0) {
@@ -281,7 +308,7 @@ var init_register = __esm({
           });
           if (!insertResSnake.ok) {
             const errText2 = await insertResSnake.text().catch(() => "");
-            return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { "content-type": "application/json" } });
+            return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
           }
           const createdArrSnake = await insertResSnake.json();
           created = Array.isArray(createdArrSnake) ? createdArrSnake[0] : createdArrSnake;
@@ -295,9 +322,9 @@ var init_register = __esm({
           message: "User registered successfully",
           token,
           user: created
-        }), { headers: { "content-type": "application/json" } });
+        }), { headers: { "content-type": "application/json", ...corsHeaders2() } });
       } catch (e) {
-        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json" } });
+        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
       }
     }, "onRequestPost");
   }
@@ -320,8 +347,10 @@ var init_functionsRoutes_0_00735418631797935 = __esm({
     init_status();
     init_debug_env();
     init_order();
+    init_order();
     init_orders();
     init_products();
+    init_register();
     init_register();
     init_ping();
     routes = [
@@ -338,6 +367,13 @@ var init_functionsRoutes_0_00735418631797935 = __esm({
         method: "GET",
         middlewares: [],
         modules: [onRequestGet2]
+      },
+      {
+        routePath: "/api/order",
+        mountPath: "/api",
+        method: "OPTIONS",
+        middlewares: [],
+        modules: [onRequestOptions]
       },
       {
         routePath: "/api/order",
@@ -359,6 +395,13 @@ var init_functionsRoutes_0_00735418631797935 = __esm({
         method: "GET",
         middlewares: [],
         modules: [onRequestGet3]
+      },
+      {
+        routePath: "/api/register",
+        mountPath: "/api",
+        method: "OPTIONS",
+        middlewares: [],
+        modules: [onRequestOptions2]
       },
       {
         routePath: "/api/register",

@@ -19,10 +19,10 @@ export const onRequestGet: PagesFunction = async ({ env }) => {
       : [];
 
     return new Response(JSON.stringify({ products: data ?? [] }), {
-      headers: { 'content-type': 'application/json' }
+      headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' }
     });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500 });
+    return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { 'access-control-allow-origin': '*' } });
   }
 };
 

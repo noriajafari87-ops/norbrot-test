@@ -1,12 +1,24 @@
 type PagesFunction = (ctx: any) => Promise<Response>;
 
+function corsHeaders() {
+  return {
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'GET,POST,OPTIONS',
+    'access-control-allow-headers': 'authorization,content-type',
+  } as Record<string, string>;
+}
+
+export const onRequestOptions: PagesFunction = async () => {
+  return new Response(null, { status: 204, headers: corsHeaders() });
+};
+
 export const onRequestPost: PagesFunction = async ({ request, env }) => {
   try {
     const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env as any;
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
       return new Response(JSON.stringify({ error: 'Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE' }), {
         status: 500,
-        headers: { 'content-type': 'application/json' }
+        headers: { 'content-type': 'application/json', ...corsHeaders() }
       });
     }
 
@@ -34,7 +46,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
     });
     if (!selectRes.ok) {
       const errText = await selectRes.text().catch(() => '');
-      return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { 'content-type': 'application/json' } });
+      return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { 'content-type': 'application/json', ...corsHeaders() } });
     }
     const existingArr = await selectRes.json();
     if (Array.isArray(existingArr) && existingArr.length > 0) {
@@ -77,7 +89,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       });
       if (!insertResSnake.ok) {
         const errText2 = await insertResSnake.text().catch(() => '');
-        return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { 'content-type': 'application/json' } });
+        return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { 'content-type': 'application/json', ...corsHeaders() } });
       }
       const createdArrSnake = await insertResSnake.json();
       created = Array.isArray(createdArrSnake) ? createdArrSnake[0] : createdArrSnake;
@@ -94,9 +106,9 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       message: 'User registered successfully',
       token,
       user: created,
-    }), { headers: { 'content-type': 'application/json' } });
+    }), { headers: { 'content-type': 'application/json', ...corsHeaders() } });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { 'content-type': 'application/json' } });
+    return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { 'content-type': 'application/json', ...corsHeaders() } });
   }
 };
 

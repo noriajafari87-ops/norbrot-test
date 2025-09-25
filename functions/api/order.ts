@@ -1,5 +1,17 @@
 type PagesFunction = (ctx: any) => Promise<Response>;
 
+function corsHeaders() {
+  return {
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'GET,POST,OPTIONS',
+    'access-control-allow-headers': 'authorization,content-type',
+  } as Record<string, string>;
+}
+
+export const onRequestOptions: PagesFunction = async () => {
+  return new Response(null, { status: 204, headers: corsHeaders() });
+};
+
 export const onRequestPost: PagesFunction = async ({ request, env }) => {
   try {
     const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env as any;
@@ -9,7 +21,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
 
     // Use bundled build for Workers
     const payload = await request.json();
-    if (!payload?.userId) return new Response("userId required", { status: 400 });
+    if (!payload?.userId) return new Response("userId required", { status: 400, headers: corsHeaders() });
 
     // Insert via REST to avoid ESM import issues in local Miniflare
     const insertUrl = `${SUPABASE_URL}/rest/v1/orders?select=*`;
@@ -39,16 +51,16 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
     });
     if (!insertRes.ok) {
       const errText = await insertRes.text().catch(() => '');
-      return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500 });
+      return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500, headers: corsHeaders() });
     }
     const createdArr = await insertRes.json();
     const data = Array.isArray(createdArr) ? createdArr[0] : createdArr;
 
     return new Response(JSON.stringify({ ok: true, order: data }), {
-      headers: { 'content-type': 'application/json' }
+      headers: { 'content-type': 'application/json', ...corsHeaders() }
     });
   } catch (e: any) {
-    return new Response(String(e?.message || e), { status: 500 });
+    return new Response(String(e?.message || e), { status: 500, headers: corsHeaders() });
   }
 };
 
