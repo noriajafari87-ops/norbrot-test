@@ -4,12 +4,11 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
   try {
     const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env as any;
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-      return new Response("Missing env", { status: 500 });
+      return new Response(JSON.stringify({ error: 'Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE' }), {
+        status: 500,
+        headers: { 'content-type': 'application/json' }
+      });
     }
-
-    // @ts-ignore using CDN import at runtime for Workers
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, { global: { fetch } });
 
     const body = await request.json();
     const {
@@ -23,30 +22,76 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       });
     }
 
-    // Check if user exists by phone
-    const { data: existing, error: findErr } = await supabase
-      .from('users')
-      .select('id,firstName,lastName,phone')
-      .eq('phone', phone)
-      .maybeSingle();
-    if (findErr) return new Response(findErr.message, { status: 500 });
-    if (existing) {
+    // Check if user exists by phone via Supabase REST
+    // Use a minimal select to avoid unknown column errors on differing schemas
+    const selectUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone`;
+    const selectRes = await fetch(selectUrl, {
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+        'content-type': 'application/json'
+      }
+    });
+    if (!selectRes.ok) {
+      const errText = await selectRes.text().catch(() => '');
+      return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { 'content-type': 'application/json' } });
+    }
+    const existingArr = await selectRes.json();
+    if (Array.isArray(existingArr) && existingArr.length > 0) {
       return new Response(JSON.stringify({ error: 'User already exists with this phone number' }), {
         status: 400, headers: { 'content-type': 'application/json' }
       });
     }
 
-    // Create user
-    const { data: created, error: insertErr } = await supabase
-      .from('users')
-      .insert({
+    // Create user via REST
+    const insertUrl = `${SUPABASE_URL}/rest/v1/users?select=*`;
+    const insertRes = await fetch(insertUrl, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
         firstName, lastName, phone,
         street, houseNumber, apartment, postalCode, city, state,
         country: 'Deutschland'
       })
-      .select()
-      .single();
-    if (insertErr) return new Response(insertErr.message, { status: 500 });
+    });
+    let created = null as any;
+    if (!insertRes.ok) {
+      const errText = await insertRes.text().catch(() => '');
+      // Fallback to snake_case columns if camelCase failed
+      const insertResSnake = await fetch(insertUrl, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_SERVICE_ROLE,
+          Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          phone,
+          street,
+          house_number: houseNumber,
+          apartment,
+          postal_code: postalCode,
+          city,
+          state,
+          country: 'Deutschland'
+        })
+      });
+      if (!insertResSnake.ok) {
+        const errText2 = await insertResSnake.text().catch(() => '');
+        return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { 'content-type': 'application/json' } });
+      }
+      const createdArrSnake = await insertResSnake.json();
+      created = Array.isArray(createdArrSnake) ? createdArrSnake[0] : createdArrSnake;
+    } else {
+      const createdArr = await insertRes.json();
+      created = Array.isArray(createdArr) ? createdArr[0] : createdArr;
+    }
 
     // Generate simple permanent token (base64 JSON like old app)
     const token = Buffer.from(JSON.stringify({ userId: created.id, timestamp: Date.now() })).toString('base64');
@@ -58,7 +103,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       user: created,
     }), { headers: { 'content-type': 'application/json' } });
   } catch (e: any) {
-    return new Response(String(e?.message || e), { status: 500 });
+    return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { 'content-type': 'application/json' } });
   }
 };
 

@@ -6,29 +6,14 @@ export const onRequestGet: PagesFunction = async ({ env }) => {
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       return new Response(JSON.stringify({ error: "Missing SUPABASE envs" }), { status: 500 });
     }
-    // Use bundled build for Workers
-    // @ts-ignore using CDN import at runtime
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
-
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch } });
-
-    // Try snake_case first
-    let { data, error } = await supabase
-      .from('products')
-      .select('id,name,slug,price_cents,active')
-      .eq('active', true)
-      .order('id');
-
-    if (error) {
-      // Try camelCase alternative
-      const alt = await supabase
-        .from('products')
-        .select('id,name,slug,priceCents,active')
-        .eq('active', true)
-        .order('id');
-      if (!alt.error) data = alt.data;
-      else throw error;
+    // Read via REST to avoid ESM import issues in local Miniflare
+    const url = `${SUPABASE_URL}/rest/v1/products?select=id,name,slug,price_cents,active&active=eq.true&order=id`;
+    const res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      return new Response(JSON.stringify({ error: `products fetch failed: ${res.status} ${errText}` }), { status: 500 });
     }
+    const data = await res.json();
 
     return new Response(JSON.stringify({ products: data ?? [] }), {
       headers: { 'content-type': 'application/json' }

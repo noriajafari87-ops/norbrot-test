@@ -8,16 +8,19 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
     }
 
     // Use bundled build for Workers
-    // @ts-ignore - Using runtime ESM import from CDN in Pages Functions environment
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, { global: { fetch } });
-
     const payload = await request.json();
     if (!payload?.userId) return new Response("userId required", { status: 400 });
 
-    const { data, error } = await supabase
-      .from('orders')
-      .insert({
+    // Insert via REST to avoid ESM import issues in local Miniflare
+    const insertUrl = `${SUPABASE_URL}/rest/v1/orders?select=*`;
+    const insertRes = await fetch(insertUrl, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
         userId: payload.userId,
         productName: payload.productName ?? 'Barbari',
         quantity: payload.quantity ?? 1,
@@ -33,10 +36,14 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
         city: payload.city,
         state: payload.state,
       })
-      .select()
-      .single();
+    });
+    if (!insertRes.ok) {
+      const errText = await insertRes.text().catch(() => '');
+      return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500 });
+    }
+    const createdArr = await insertRes.json();
+    const data = Array.isArray(createdArr) ? createdArr[0] : createdArr;
 
-    if (error) return new Response(error.message, { status: 500 });
     return new Response(JSON.stringify({ ok: true, order: data }), {
       headers: { 'content-type': 'application/json' }
     });

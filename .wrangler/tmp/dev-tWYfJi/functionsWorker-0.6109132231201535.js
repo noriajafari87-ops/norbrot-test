@@ -34,7 +34,7 @@ function stripCfConnectingIPHeader2(input, init) {
 }
 __name(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-fVNz3B/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-Z1aIST/strip-cf-connecting-ip-header.js"() {
     __name2(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -102,29 +102,40 @@ var init_order = __esm({
         if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
           return new Response("Missing env", { status: 500 });
         }
-        const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2?bundle");
-        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, { global: { fetch } });
         const payload = await request.json();
         if (!payload?.userId)
           return new Response("userId required", { status: 400 });
-        const { data, error } = await supabase.from("orders").insert({
-          userId: payload.userId,
-          productName: payload.productName ?? "Barbari",
-          quantity: payload.quantity ?? 1,
-          totalPrice: payload.totalPrice ?? 0,
-          totalAmount: payload.totalAmount ?? payload.totalPrice ?? 0,
-          firstName: payload.firstName,
-          lastName: payload.lastName,
-          phone: payload.phone,
-          street: payload.street,
-          houseNumber: payload.houseNumber,
-          apartment: payload.apartment,
-          postalCode: payload.postalCode,
-          city: payload.city,
-          state: payload.state
-        }).select().single();
-        if (error)
-          return new Response(error.message, { status: 500 });
+        const insertUrl = `${SUPABASE_URL}/rest/v1/orders?select=*`;
+        const insertRes = await fetch(insertUrl, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_SERVICE_ROLE,
+            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: payload.userId,
+            productName: payload.productName ?? "Barbari",
+            quantity: payload.quantity ?? 1,
+            totalPrice: payload.totalPrice ?? 0,
+            totalAmount: payload.totalAmount ?? payload.totalPrice ?? 0,
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            phone: payload.phone,
+            street: payload.street,
+            houseNumber: payload.houseNumber,
+            apartment: payload.apartment,
+            postalCode: payload.postalCode,
+            city: payload.city,
+            state: payload.state
+          })
+        });
+        if (!insertRes.ok) {
+          const errText = await insertRes.text().catch(() => "");
+          return new Response(`orders insert failed: ${insertRes.status} ${errText}`, { status: 500 });
+        }
+        const createdArr = await insertRes.json();
+        const data = Array.isArray(createdArr) ? createdArr[0] : createdArr;
         return new Response(JSON.stringify({ ok: true, order: data }), {
           headers: { "content-type": "application/json" }
         });
@@ -156,16 +167,13 @@ var init_products = __esm({
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
           return new Response(JSON.stringify({ error: "Missing SUPABASE envs" }), { status: 500 });
         }
-        const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2?bundle");
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch } });
-        let { data, error } = await supabase.from("products").select("id,name,slug,price_cents,active").eq("active", true).order("id");
-        if (error) {
-          const alt = await supabase.from("products").select("id,name,slug,priceCents,active").eq("active", true).order("id");
-          if (!alt.error)
-            data = alt.data;
-          else
-            throw error;
+        const url = `${SUPABASE_URL}/rest/v1/products?select=id,name,slug,price_cents,active&active=eq.true&order=id`;
+        const res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          return new Response(JSON.stringify({ error: `products fetch failed: ${res.status} ${errText}` }), { status: 500 });
         }
+        const data = await res.json();
         return new Response(JSON.stringify({ products: data ?? [] }), {
           headers: { "content-type": "application/json" }
         });
@@ -184,10 +192,11 @@ var init_register = __esm({
       try {
         const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = env;
         if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-          return new Response("Missing env", { status: 500 });
+          return new Response(JSON.stringify({ error: "Missing env SUPABASE_URL or SUPABASE_SERVICE_ROLE" }), {
+            status: 500,
+            headers: { "content-type": "application/json" }
+          });
         }
-        const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2?bundle");
-        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, { global: { fetch } });
         const body = await request.json();
         const {
           firstName,
@@ -206,29 +215,79 @@ var init_register = __esm({
             headers: { "content-type": "application/json" }
           });
         }
-        const { data: existing, error: findErr } = await supabase.from("users").select("id,firstName,lastName,phone").eq("phone", phone).maybeSingle();
-        if (findErr)
-          return new Response(findErr.message, { status: 500 });
-        if (existing) {
+        const selectUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone`;
+        const selectRes = await fetch(selectUrl, {
+          headers: {
+            apikey: SUPABASE_SERVICE_ROLE,
+            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+            "content-type": "application/json"
+          }
+        });
+        if (!selectRes.ok) {
+          const errText = await selectRes.text().catch(() => "");
+          return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json" } });
+        }
+        const existingArr = await selectRes.json();
+        if (Array.isArray(existingArr) && existingArr.length > 0) {
           return new Response(JSON.stringify({ error: "User already exists with this phone number" }), {
             status: 400,
             headers: { "content-type": "application/json" }
           });
         }
-        const { data: created, error: insertErr } = await supabase.from("users").insert({
-          firstName,
-          lastName,
-          phone,
-          street,
-          houseNumber,
-          apartment,
-          postalCode,
-          city,
-          state,
-          country: "Deutschland"
-        }).select().single();
-        if (insertErr)
-          return new Response(insertErr.message, { status: 500 });
+        const insertUrl = `${SUPABASE_URL}/rest/v1/users?select=*`;
+        const insertRes = await fetch(insertUrl, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_SERVICE_ROLE,
+            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            phone,
+            street,
+            houseNumber,
+            apartment,
+            postalCode,
+            city,
+            state,
+            country: "Deutschland"
+          })
+        });
+        let created = null;
+        if (!insertRes.ok) {
+          const errText = await insertRes.text().catch(() => "");
+          const insertResSnake = await fetch(insertUrl, {
+            method: "POST",
+            headers: {
+              apikey: SUPABASE_SERVICE_ROLE,
+              Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
+              "content-type": "application/json"
+            },
+            body: JSON.stringify({
+              first_name: firstName,
+              last_name: lastName,
+              phone,
+              street,
+              house_number: houseNumber,
+              apartment,
+              postal_code: postalCode,
+              city,
+              state,
+              country: "Deutschland"
+            })
+          });
+          if (!insertResSnake.ok) {
+            const errText2 = await insertResSnake.text().catch(() => "");
+            return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { "content-type": "application/json" } });
+          }
+          const createdArrSnake = await insertResSnake.json();
+          created = Array.isArray(createdArrSnake) ? createdArrSnake[0] : createdArrSnake;
+        } else {
+          const createdArr = await insertRes.json();
+          created = Array.isArray(createdArr) ? createdArr[0] : createdArr;
+        }
         const token = Buffer.from(JSON.stringify({ userId: created.id, timestamp: Date.now() })).toString("base64");
         return new Response(JSON.stringify({
           success: true,
@@ -237,7 +296,7 @@ var init_register = __esm({
           user: created
         }), { headers: { "content-type": "application/json" } });
       } catch (e) {
-        return new Response(String(e?.message || e), { status: 500 });
+        return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500, headers: { "content-type": "application/json" } });
       }
     }, "onRequestPost");
   }

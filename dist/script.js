@@ -221,12 +221,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (token && user) {
         // User is already logged in, redirect to products page
         if (window.location.pathname.includes('auth.html') || window.location.pathname === '/') {
-            window.location.href = 'products.html';
+            window.location.href = '/dist/products';
         }
     } else {
         // User is not logged in, redirect to auth page
-        if (window.location.pathname.includes('products.html')) {
-            window.location.href = 'auth.html';
+        if (window.location.pathname.includes('/dist/products')) {
+            window.location.href = '/';
         }
     }
     
@@ -261,6 +261,17 @@ document.addEventListener('DOMContentLoaded', function() {
             addToCart(productName, price);
         });
     });
+
+    // Attach register form handler on homepage
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForm(registerForm)) {
+                handleRegister(registerForm);
+            }
+        });
+    }
 
     // Load cart data on checkout page
     if (window.location.pathname.includes('checkout.html')) {
@@ -320,10 +331,14 @@ function handleRegister(form) {
         credentials: 'include',
         body: JSON.stringify(registerData)
     })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
+    .then(async response => {
+        let payload = null;
+        try { payload = await response.json(); } catch (_) {}
+        if (!response.ok) {
+            const msg = (payload && (payload.error || payload.message)) || `HTTP error! status: ${response.status}`;
+            throw new Error(msg);
+        }
+        return payload;
     })
     .then(data => {
         console.log('Registration response:', data);
@@ -332,7 +347,7 @@ function handleRegister(form) {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             form.reset();
-            setTimeout(() => { window.location.href = 'products.html'; }, 1500);
+            setTimeout(() => { window.location.href = '/dist/products'; }, 800);
         } else {
             showNotification(data.error || 'Registration failed');
         }
