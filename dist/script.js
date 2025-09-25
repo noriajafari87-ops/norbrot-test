@@ -212,8 +212,6 @@ function logout() {
     }, 1000);
 }
 
-// Language Switcher - now uses the real function from languages.js
-
 // Initialize page-specific functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Check if user is already logged in (permanent session)
@@ -264,24 +262,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle form submissions
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (validateForm(this)) {
-                if (this.id === 'registerForm') {
-                    handleRegister(this);
-                } else if (this.id === 'checkoutForm') {
-                    handleCheckout(this);
-                }
-            } else {
-                showNotification('Please fill in all required fields correctly.');
-            }
-        });
-    });
-
     // Load cart data on checkout page
     if (window.location.pathname.includes('checkout.html')) {
         loadCheckoutData();
@@ -317,7 +297,6 @@ function loadCheckoutData() {
     }
 }
 
-
 // Handle registration
 function handleRegister(form) {
     const formData = new FormData(form);
@@ -337,17 +316,13 @@ function handleRegister(form) {
 
     fetch('/api/register', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(registerData)
     })
     .then(response => {
         console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
     })
     .then(data => {
@@ -357,9 +332,7 @@ function handleRegister(form) {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             form.reset();
-            setTimeout(() => {
-                window.location.href = 'products.html';
-            }, 1500);
+            setTimeout(() => { window.location.href = 'products.html'; }, 1500);
         } else {
             showNotification(data.error || 'Registration failed');
         }
@@ -401,9 +374,7 @@ function handleCheckout(form) {
 
     fetch('/api/orders', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(orderData)
     })
@@ -411,15 +382,9 @@ function handleCheckout(form) {
     .then(data => {
         if (data.success) {
             showNotification('Order placed successfully! Thank you for your purchase.');
-            
-            // Clear cart
             localStorage.removeItem('cart');
             localStorage.removeItem('checkoutData');
-            
-            // Redirect to profile page
-            setTimeout(() => {
-                window.location.href = 'profile.html';
-            }, 2000);
+            setTimeout(() => { window.location.href = 'profile.html'; }, 2000);
         } else {
             showNotification(data.error || 'Order failed');
         }
@@ -439,6 +404,6 @@ function placeOrder() {
         return;
     }
     
-    // Redirect to checkout page
     window.location.href = 'checkout.html';
 }
+

@@ -87,7 +87,6 @@
         </div>
     </div>
 
-
     <script src="languages.js"></script>
     <script src="script.js"></script>
     <script>
@@ -121,36 +120,42 @@
         function placeOrder() {
             const totalPrice = currentQuantity * breadPrice;
             
-            // Get current language
             const currentLang = localStorage.getItem('selectedLanguage') || 'de';
             const t = translations[currentLang] || translations.de;
             
-            // Create order on server
             const token = localStorage.getItem('authToken');
             if (!token) {
                 alert('Please login first');
                 return;
             }
             
-            // Get user data from localStorage
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             
-            fetch('/api/orders', {
+            fetch('/api/order', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    userId: user.id,
+                    productName: 'Traditionelles Barbari-Brot',
                     quantity: currentQuantity,
                     totalPrice: totalPrice,
-                    userId: user.id,
-                    userData: user
+                    totalAmount: totalPrice,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    phone: user.phone,
+                    street: user.street,
+                    houseNumber: user.houseNumber,
+                    apartment: user.apartment,
+                    postalCode: user.postalCode,
+                    city: user.city,
+                    state: user.state
                 })
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
+                if (data.ok) {
                     const orderDetails = `
                         <div class="order-item">
                             <span><strong>${t.product}:</strong> Traditionelles Barbari-Brot</span>
@@ -169,7 +174,7 @@
                     document.getElementById('orderDetails').innerHTML = orderDetails;
                     document.getElementById('orderModal').style.display = 'block';
                 } else {
-                    alert('Failed to create order: ' + data.error);
+                    alert('Failed to create order: ' + (data.error || 'unknown error'));
                 }
             })
             .catch(error => {
@@ -182,8 +187,6 @@
             document.getElementById('orderModal').style.display = 'none';
         }
 
-
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const orderModal = document.getElementById('orderModal');
             
@@ -194,3 +197,4 @@
     </script>
 </body>
 </html>
+

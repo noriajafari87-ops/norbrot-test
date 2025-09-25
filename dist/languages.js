@@ -179,56 +179,33 @@ const translations = {
 
 // Language switching function
 function switchLanguage(lang) {
-    // Store selected language
     localStorage.setItem('selectedLanguage', lang);
-    
-    // Update document language and direction
     document.documentElement.lang = lang;
-    if (lang === 'fa') {
-        document.documentElement.dir = 'rtl';
-    } else {
-        document.documentElement.dir = 'ltr';
-    }
-    
-    // Update all text elements
+    document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
     updatePageText(lang);
-    
-    // Update active language button
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.getAttribute('data-lang') === lang) {
-            btn.classList.add('active');
-        }
+        if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
     });
-    
-    // Show notification
     showNotification(translations[lang].languageChanged);
 }
 
 // Update page text based on language
 function updatePageText(lang) {
     const t = translations[lang];
-    
-    // Update navigation
     const bakeryElements = document.querySelectorAll('.nav-logo span');
     bakeryElements.forEach(el => el.textContent = t.bakery);
-    
     const logoutElements = document.querySelectorAll('#logoutBtn');
     logoutElements.forEach(el => el.textContent = t.logout);
-    
-    // Update registration page
+
     if (document.querySelector('#registerForm')) {
         document.querySelector('h2').textContent = t.registration;
         document.querySelector('p').textContent = t.registrationSubtitle;
-        
-        // Update section titles
         const sectionTitles = document.querySelectorAll('h3');
         if (sectionTitles.length >= 2) {
             sectionTitles[0].textContent = t.personalInfo;
             sectionTitles[1].textContent = t.addressInfo;
         }
-        
-        // Update form labels
         const labels = {
             'firstName': t.firstName,
             'lastName': t.lastName,
@@ -240,67 +217,30 @@ function updatePageText(lang) {
             'city': t.city,
             'state': t.state
         };
-        
         Object.keys(labels).forEach(id => {
             const label = document.querySelector(`label[for="${id}"]`);
             if (label) label.textContent = labels[id];
         });
-        
-        // Update button
         const button = document.querySelector('button[type="submit"]');
         if (button) button.textContent = t.registerButton;
     }
-    
-    // Update products page
     const pageTitle = document.querySelector('.page-title');
-    if (pageTitle) {
-        pageTitle.textContent = t.freshBread;
-    }
-    
+    if (pageTitle) pageTitle.textContent = t.freshBread;
     const productPrice = document.querySelector('.product-price-large');
-    if (productPrice) {
-        productPrice.textContent = `${t.price}: 3,50 €`;
-    }
-    
+    if (productPrice) productPrice.textContent = `${t.price}: 3,50 €`;
     const quantityLabel = document.querySelector('.quantity-label-large');
-    if (quantityLabel) {
-        quantityLabel.textContent = `${t.quantity}:`;
-    }
-    
+    if (quantityLabel) quantityLabel.textContent = `${t.quantity}:`;
     const orderBtn = document.querySelector('.order-btn-large');
-    if (orderBtn) {
-        orderBtn.innerHTML = `<i class="fas fa-check-circle"></i> ${t.confirmOrder}`;
-    }
-    
+    if (orderBtn) orderBtn.innerHTML = `<i class="fas fa-check-circle"></i> ${t.confirmOrder}`;
     const totalLabel = document.querySelector('.total-label');
-    if (totalLabel) {
-        totalLabel.textContent = t.total + ':';
-    }
-    
-    // Update admin panel elements
+    if (totalLabel) totalLabel.textContent = t.total + ':';
     const adminPanelBtn = document.querySelector('#adminPanelBtn span');
-    if (adminPanelBtn) {
-        adminPanelBtn.textContent = t.adminPanel;
-    }
-    
-    const adminTitle = document.querySelector('.admin-title');
-    if (adminTitle) {
-        adminTitle.textContent = t.adminPanel + ' - Orders';
-    }
-    
-    // Update modal elements
+    if (adminPanelBtn) adminPanelBtn.textContent = t.adminPanel;
     const successTitle = document.querySelector('.success-title');
-    if (successTitle) {
-        successTitle.textContent = t.orderConfirmed;
-    }
-    
+    if (successTitle) successTitle.textContent = t.orderConfirmed;
     const paymentInfo = document.querySelector('.payment-info');
-    if (paymentInfo) {
-        paymentInfo.textContent = t.paymentInfo;
-    }
-    
+    if (paymentInfo) paymentInfo.textContent = t.paymentInfo;
     const closeBtn = document.querySelector('.btn-success');
-    if (closeBtn) {
-        closeBtn.innerHTML = `<i class="fas fa-times"></i> ${t.close}`;
-    }
+    if (closeBtn) closeBtn.innerHTML = `<i class="fas fa-times"></i> ${t.close}`;
 }
+

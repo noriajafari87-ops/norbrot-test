@@ -1,30 +1,41 @@
 type PagesFunction = (ctx: any) => Promise<Response>;
 
-export const onRequestGet: PagesFunction = async (ctx) => {
-  const { SUPABASE_URL, SUPABASE_ANON_KEY } = (ctx.env || {}) as any;
+export const onRequestGet: PagesFunction = async ({ env }) => {
+  try {
+    const { SUPABASE_URL, SUPABASE_ANON_KEY } = env as any;
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      return new Response(JSON.stringify({ error: "Missing SUPABASE envs" }), { status: 500 });
+    }
+    // Use bundled build for Workers
+    // @ts-ignore using CDN import at runtime
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
 
-  // If env is present, try Supabase products; otherwise fallback to static product
-  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-    try {
-      // @ts-ignore using CDN import at runtime
-      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch } });
-      const { data, error } = await supabase
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch } });
+
+    // Try snake_case first
+    let { data, error } = await supabase
+      .from('products')
+      .select('id,name,slug,price_cents,active')
+      .eq('active', true)
+      .order('id');
+
+    if (error) {
+      // Try camelCase alternative
+      const alt = await supabase
         .from('products')
-        .select('id,name,slug,price_cents,active')
+        .select('id,name,slug,priceCents,active')
         .eq('active', true)
         .order('id');
-      if (error) throw error;
-      return Response.json({ products: data || [] });
-    } catch (e: any) {
-      // fallthrough to static
+      if (!alt.error) data = alt.data;
+      else throw error;
     }
-  }
 
-  const products = [
-    { id: 1, name: 'Traditionelles Barbari-Brot', slug: 'barbari-brot', price_cents: 350, active: true },
-  ];
-  return Response.json({ products });
+    return new Response(JSON.stringify({ products: data ?? [] }), {
+      headers: { 'content-type': 'application/json' }
+    });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: String(e?.message || e) }), { status: 500 });
+  }
 };
 
 
