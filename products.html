@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbari-Brot - norbrot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-bread-slice"></i>
+                <span>norbrot</span>
+            </div>
+            <div class="nav-right">
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="de">Deutsch</button>
+                    <button class="lang-btn" data-lang="en">English</button>
+                    <button class="lang-btn" data-lang="tr">Türkçe</button>
+                    <button class="lang-btn" data-lang="fa">فارسی</button>
+                </div>
+                <a href="admin.html" class="nav-link admin-link" id="adminPanelBtn" style="display: none;">
+                    <i class="fas fa-crown"></i>
+                    <span>پنل مدیریت</span>
+                </a>
+                <a href="#" class="nav-link" id="logoutBtn" onclick="logout()">Abmelden</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Product Page -->
+    <section class="product-page elderly-friendly">
+        <div class="container">
+            <h2 class="page-title">Frisches Barbari-Brot</h2>
+            
+            <!-- Barbari Bread Product -->
+            <div class="product-item elderly-product simple-product">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Barbari-Brot" class="product-image-large">
+                </div>
+                <div class="product-details">
+                    <div class="product-price-large">Preis: 3,50 €</div>
+                    
+                    <!-- Quantity Selection -->
+                    <div class="quantity-section-large">
+                        <label for="quantity" class="quantity-label-large">Anzahl:</label>
+                        <div class="quantity-controls-large">
+                            <button type="button" class="quantity-btn-large" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly class="quantity-input-large">
+                            <button type="button" class="quantity-btn-large" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Live Total Display -->
+                    <div class="total-display-large">
+                        <span class="total-label">Gesamt:</span>
+                        <span class="total-amount" id="totalAmount">3,50 €</span>
+                    </div>
+                    
+                    <!-- Order Button -->
+                    <button class="order-btn-large" onclick="placeOrder()">
+                        <i class="fas fa-check-circle"></i>
+                        Bestellung bestätigen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderModal" class="modal" style="display: none;">
+        <div class="modal-content success-modal">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="success-title">Bestellung bestätigt!</h3>
+            <div id="orderDetails" class="order-details"></div>
+            <p class="payment-info">Die Zahlung erfolgt bar bei der Lieferung.</p>
+            <button class="btn btn-success" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+                Schließen
+            </button>
+        </div>
+    </div>
+
+
+    <script src="languages.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let currentQuantity = 1;
+        const breadPrice = 3.50;
+
+        function increaseQuantity() {
+            if (currentQuantity < 10) {
+                currentQuantity++;
+                document.getElementById('quantity').value = currentQuantity;
+                updateTotal();
+            }
+        }
+
+        function decreaseQuantity() {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                document.getElementById('quantity').value = currentQuantity;
+                updateTotal();
+            }
+        }
+
+        function updateTotal() {
+            const totalPrice = currentQuantity * breadPrice;
+            const totalAmount = document.getElementById('totalAmount');
+            if (totalAmount) {
+                totalAmount.textContent = totalPrice.toFixed(2).replace('.', ',') + ' €';
+            }
+        }
+
+        function placeOrder() {
+            const totalPrice = currentQuantity * breadPrice;
+            
+            // Get current language
+            const currentLang = localStorage.getItem('selectedLanguage') || 'de';
+            const t = translations[currentLang] || translations.de;
+            
+            // Create order on server
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Please login first');
+                return;
+            }
+            
+            // Get user data from localStorage
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    quantity: currentQuantity,
+                    totalPrice: totalPrice,
+                    userId: user.id,
+                    userData: user
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const orderDetails = `
+                        <div class="order-item">
+                            <span><strong>${t.product}:</strong> Traditionelles Barbari-Brot</span>
+                        </div>
+                        <div class="order-item">
+                            <span><strong>${t.quantity}:</strong> ${currentQuantity} ${t.pieces}</span>
+                        </div>
+                        <div class="order-item">
+                            <span><strong>${t.unitPrice}:</strong> ${breadPrice.toFixed(2)} €</span>
+                        </div>
+                        <div class="order-item total-item">
+                            <span><strong>${t.totalPrice}:</strong> ${totalPrice.toFixed(2)} €</span>
+                        </div>
+                    `;
+                    
+                    document.getElementById('orderDetails').innerHTML = orderDetails;
+                    document.getElementById('orderModal').style.display = 'block';
+                } else {
+                    alert('Failed to create order: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Order creation error:', error);
+                alert('Failed to create order. Please try again.');
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const orderModal = document.getElementById('orderModal');
+            
+            if (event.target === orderModal) {
+                orderModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
