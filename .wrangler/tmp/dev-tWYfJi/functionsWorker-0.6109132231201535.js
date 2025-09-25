@@ -34,7 +34,7 @@ function stripCfConnectingIPHeader2(input, init) {
 }
 __name(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-bocoAu/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-coPGLA/strip-cf-connecting-ip-header.js"() {
     __name2(stripCfConnectingIPHeader2, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -225,7 +225,8 @@ var init_register = __esm({
             headers: { "content-type": "application/json", ...corsHeaders2() }
           });
         }
-        const body = await request.json();
+        const bodyText = await request.text();
+        const body = bodyText ? JSON.parse(bodyText) : {};
         const {
           firstName,
           lastName,
@@ -255,7 +256,8 @@ var init_register = __esm({
           const errText = await selectRes.text().catch(() => "");
           return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
         }
-        const existingArr = await selectRes.json();
+        const selectRaw = await selectRes.text();
+        const existingArr = selectRaw ? JSON.parse(selectRaw) : [];
         if (Array.isArray(existingArr) && existingArr.length > 0) {
           return new Response(JSON.stringify({ error: "User already exists with this phone number" }), {
             status: 400,
@@ -268,7 +270,8 @@ var init_register = __esm({
           headers: {
             apikey: SUPABASE_SERVICE_ROLE,
             Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
-            "content-type": "application/json"
+            "content-type": "application/json",
+            Prefer: "return=representation"
           },
           body: JSON.stringify({
             firstName,
@@ -291,7 +294,8 @@ var init_register = __esm({
             headers: {
               apikey: SUPABASE_SERVICE_ROLE,
               Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
-              "content-type": "application/json"
+              "content-type": "application/json",
+              Prefer: "return=representation"
             },
             body: JSON.stringify({
               firstName,
@@ -310,13 +314,23 @@ var init_register = __esm({
             const errText2 = await insertResSnake.text().catch(() => "");
             return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { "content-type": "application/json", ...corsHeaders2() } });
           }
-          const createdArrSnake = await insertResSnake.json();
+          const rawSnake = await insertResSnake.text();
+          const createdArrSnake = rawSnake ? JSON.parse(rawSnake) : [];
           created = Array.isArray(createdArrSnake) ? createdArrSnake[0] : createdArrSnake;
         } else {
-          const createdArr = await insertRes.json();
+          const raw = await insertRes.text();
+          const createdArr = raw ? JSON.parse(raw) : [];
           created = Array.isArray(createdArr) ? createdArr[0] : createdArr;
         }
-        const token = Buffer.from(JSON.stringify({ userId: created.id, timestamp: Date.now() })).toString("base64");
+        if (!created || !created.id) {
+          const refetchUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone&limit=1`;
+          const refetchRes = await fetch(refetchUrl, { headers: { apikey: SUPABASE_SERVICE_ROLE, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}` } });
+          const refetchRaw = await refetchRes.text();
+          const refetchArr = refetchRaw ? JSON.parse(refetchRaw) : [];
+          created = Array.isArray(refetchArr) ? refetchArr[0] : refetchArr;
+        }
+        const tokenPayload = JSON.stringify({ userId: created?.id, timestamp: Date.now() });
+        const token = btoa(tokenPayload);
         return new Response(JSON.stringify({
           success: true,
           message: "User registered successfully",

@@ -328,33 +328,34 @@ function handleRegister(form) {
     fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        // credentials not required; tokens are returned in JSON
         body: JSON.stringify(registerData)
     })
     .then(async response => {
+        const raw = await response.text();
         let payload = null;
-        try { payload = await response.json(); } catch (_) {}
+        try { payload = raw ? JSON.parse(raw) : null; } catch (e) { payload = null; }
         if (!response.ok) {
-            const msg = (payload && (payload.error || payload.message)) || `HTTP error! status: ${response.status}`;
+            const msg = (payload && (payload.error || payload.message)) || (raw || `HTTP error! status: ${response.status}`);
             throw new Error(msg);
         }
-        return payload;
+        return payload || {};
     })
     .then(data => {
         console.log('Registration response:', data);
-        if (data.success) {
+        if (data && data.success) {
             showNotification('Registrierung erfolgreich! Sie werden angemeldet...');
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             form.reset();
             setTimeout(() => { window.location.href = '/dist/products'; }, 800);
         } else {
-            showNotification(data.error || 'Registration failed');
+            showNotification((data && (data.error || data.message)) || 'Registration failed');
         }
     })
     .catch(error => {
         console.error('Registration error:', error);
-        showNotification('Registration failed. Please try again. Error: ' + error.message);
+        alert('Registration failed. Please try again.\n\nError: ' + (error && error.message ? error.message : String(error)));
     });
 }
 

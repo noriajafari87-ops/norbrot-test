@@ -22,7 +22,8 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       });
     }
 
-    const body = await request.json();
+    const bodyText = await request.text();
+    const body = bodyText ? JSON.parse(bodyText) : {};
     const {
       firstName, lastName, phone,
       street, houseNumber, apartment, postalCode, city, state,
@@ -48,7 +49,8 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       const errText = await selectRes.text().catch(() => '');
       return new Response(JSON.stringify({ error: `users select failed: ${selectRes.status} ${errText}` }), { status: 500, headers: { 'content-type': 'application/json', ...corsHeaders() } });
     }
-    const existingArr = await selectRes.json();
+    const selectRaw = await selectRes.text();
+    const existingArr = selectRaw ? JSON.parse(selectRaw) : [];
     if (Array.isArray(existingArr) && existingArr.length > 0) {
       return new Response(JSON.stringify({ error: 'User already exists with this phone number' }), {
         status: 400, headers: { 'content-type': 'application/json' }
@@ -62,7 +64,8 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       headers: {
         apikey: SUPABASE_SERVICE_ROLE,
         Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        Prefer: 'return=representation'
       },
       body: JSON.stringify({
         firstName, lastName, phone,
@@ -79,7 +82,8 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
         headers: {
           apikey: SUPABASE_SERVICE_ROLE,
           Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
-          'content-type': 'application/json'
+          'content-type': 'application/json',
+          Prefer: 'return=representation'
         },
         body: JSON.stringify({
           firstName, lastName, phone,
@@ -91,15 +95,28 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
         const errText2 = await insertResSnake.text().catch(() => '');
         return new Response(JSON.stringify({ error: `users insert failed: ${insertRes.status} ${errText} | snake_case: ${insertResSnake.status} ${errText2}` }), { status: 500, headers: { 'content-type': 'application/json', ...corsHeaders() } });
       }
-      const createdArrSnake = await insertResSnake.json();
+      const rawSnake = await insertResSnake.text();
+      const createdArrSnake = rawSnake ? JSON.parse(rawSnake) : [];
       created = Array.isArray(createdArrSnake) ? createdArrSnake[0] : createdArrSnake;
     } else {
-      const createdArr = await insertRes.json();
+      const raw = await insertRes.text();
+      const createdArr = raw ? JSON.parse(raw) : [];
       created = Array.isArray(createdArr) ? createdArr[0] : createdArr;
     }
 
     // Generate simple permanent token (base64 JSON like old app)
-    const token = Buffer.from(JSON.stringify({ userId: created.id, timestamp: Date.now() })).toString('base64');
+    // Fallback: if created is empty, re-fetch by phone to get id
+    if (!created || !created.id) {
+      const refetchUrl = `${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=id,phone&limit=1`;
+      const refetchRes = await fetch(refetchUrl, { headers: { apikey: SUPABASE_SERVICE_ROLE, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}` } });
+      const refetchRaw = await refetchRes.text();
+      const refetchArr = refetchRaw ? JSON.parse(refetchRaw) : [];
+      created = Array.isArray(refetchArr) ? refetchArr[0] : refetchArr;
+    }
+
+    const tokenPayload = JSON.stringify({ userId: created?.id, timestamp: Date.now() });
+    // Cloudflare Workers: use btoa for base64
+    const token = btoa(tokenPayload);
 
     return new Response(JSON.stringify({
       success: true,
