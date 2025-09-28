@@ -28,12 +28,10 @@
 
   <section class="product-page elderly-friendly page-decor">
     <div class="container">
-      <h2 class="page-title fancy-title"><span>Frisches Barbari-Brot</span></h2>
-
       <div class="hero-grid">
         <!-- Left: Single Image -->
         <div class="gallery card-3d image-elevated">
-          <span class="ribbon ribbon-new"><i class="fas fa-star"></i> Neu</span>
+          <span class="ribbon ribbon-new"><i class="fas fa-star"></i> <span class="new">Neu</span></span>
           <div class="gallery-main">
             <img id="mainImage" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Barbari-Brot" class="gallery-img"/>
             <span class="shine"></span>
@@ -43,18 +41,18 @@
         <!-- Right: Order Panel -->
         <div class="order-panel details-glass">
           <div class="order-header-ui">
-            <div class="price-chip">Preis: <strong>3,50 €</strong></div>
-            <div class="stock-chip"><i class="fas fa-check"></i> Heute verfügbar</div>
+            <div class="price-chip"><span class="price-label">Preis:</span> <strong>3,50 €</strong></div>
+            <div class="stock-chip"><i class="fas fa-check"></i> <span class="available-today">Heute verfügbar</span></div>
           </div>
 
           <ul class="usp-list">
-            <li><i class="fas fa-bread-slice"></i> Handgemacht, knusprig außen – weich innen</li>
-            <li><i class="fas fa-leaf"></i> Ohne Zusatzstoffe</li>
-            <li><i class="fas fa-clock"></i> Ofenfrisch am selben Tag</li>
+            <li><i class="fas fa-bread-slice"></i> <span class="handmade">Handgemacht, knusprig außen – weich innen</span></li>
+            <li><i class="fas fa-leaf"></i> <span class="no-additives">Ohne Zusatzstoffe</span></li>
+            <li><i class="fas fa-clock"></i> <span class="oven-fresh">Ofenfrisch am selben Tag</span></li>
           </ul>
 
           <div class="quantity-section-large">
-            <label for="quantity" class="quantity-label-large">Anzahl:</label>
+            <label for="quantity" class="quantity-label-large"><span class="quantity">Anzahl:</span></label>
             <div class="quantity-controls-large">
               <button type="button" class="quantity-btn-large" onclick="decreaseQuantity()">-</button>
               <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly class="quantity-input-large" />
@@ -63,24 +61,17 @@
           </div>
 
           <div class="total-display-large total-card">
-            <span class="total-label">Gesamt:</span>
+            <span class="total-label"><span class="total">Gesamt:</span></span>
             <span class="total-amount" id="totalAmount">3,50 €</span>
           </div>
 
           <button class="order-btn-large cta-pulse" onclick="openPhoneModal()">
-            <i class="fas fa-check-circle"></i>Bestellung bestätigen
+            <i class="fas fa-check-circle"></i><span class="confirm-order">Bestellung bestätigen</span>
           </button>
 
-          <div class="policy-note"><i class="fas fa-shield-alt"></i> Bezahlung bei Lieferung</div>
         </div>
       </div>
 
-      <div class="trust-badges">
-        <div class="badge"><i class="fas fa-bread-slice"></i><span>Frisch gebacken</span></div>
-        <div class="badge"><i class="fas fa-leaf"></i><span>Naturliche Zutaten</span></div>
-        <div class="badge"><i class="fas fa-truck"></i><span>Schnelle Lieferung</span></div>
-        <div class="badge"><i class="fas fa-shield-alt"></i><span>Bezahlung bei Lieferung</span></div>
-      </div>
     </div>
   </section>
 
@@ -88,15 +79,15 @@
   <div id="phoneModal" class="modal" style="display:none;align-items:center;justify-content:center;">
     <div class="modal-content phone-modal">
       <div class="modal-header-ui">
-        <h3 class="success-title">Telefonnummer eingeben</h3>
+        <h3 class="success-title phone-modal-title">Telefonnummer eingeben</h3>
         <button class="close-btn-ui" onclick="closePhoneModal()"><i class="fas fa-times"></i></button>
       </div>
-      <p class="modal-desc">Wir rufen Sie zur Bestätigung an.</p>
+      <p class="modal-desc phone-modal-desc">Wir rufen Sie zur Bestätigung an.</p>
       <div class="phone-input-wrap">
         <i class="fas fa-phone"></i>
-        <input id="phoneInput" type="tel" placeholder="z.B. +49 123 456" value="+49 ">
+        <input id="phoneInput" type="tel" class="phone-input" placeholder="z.B. +49 123 456" value="+49 ">
       </div>
-      <button class="order-btn-large cta-pulse" onclick="submitQuickOrder()" style="width:100%">
+      <button class="order-btn-large cta-pulse phone-submit" onclick="submitQuickOrder()" style="width:100%">
         <i class="fas fa-check"></i>Bestellung absenden
       </button>
     </div>
@@ -142,9 +133,9 @@
         if(data && data.ok){
           closePhoneModal();
           if(typeof showNotification==='function'){
-            showNotification('Ihre Bestellung wurde registriert. Wir rufen Sie bald an.');
+            showNotification(window.orderSuccessMessage || 'Ihre Bestellung wurde registriert. Wir rufen Sie bald an.');
           } else {
-            alert('Bestellung registriert.');
+            alert(window.orderSuccessMessage || 'Bestellung registriert.');
           }
         } else {
           alert('Fehler: '+(data && (data.error||data.message) || 'unknown'));

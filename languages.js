@@ -1,104 +1,374 @@
-// Minimal translations and language switcher for product-only site
-window.translations = {
-  de: {
-    title: 'Frisches Barbari-Brot',
-    price: 'Preis',
-    quantity: 'Anzahl', pieces: 'Stück', unitPrice: 'Einzelpreis', totalPrice: 'Gesamt',
-    confirm: 'Bestellung bestätigen',
-    availableToday: 'Heute verfügbar',
-    phoneTitle: 'Telefonnummer eingeben',
-    phoneDesc: 'Wir rufen Sie zur Bestätigung an.',
-    phonePlaceholder: 'z.B. +49 123 456',
-    submitPhone: 'Bestellung absenden',
-    successMsg: 'Ihre Bestellung wurde registriert. Wir rufen Sie bald an.'
-  },
-  en: {
-    title: 'Fresh Barbari Bread',
-    price: 'Price',
-    quantity: 'Quantity', pieces: 'Pieces', unitPrice: 'Unit Price', totalPrice: 'Total',
-    confirm: 'Confirm Order',
-    availableToday: 'Available today',
-    phoneTitle: 'Enter phone number',
-    phoneDesc: 'We will call you to confirm.',
-    phonePlaceholder: 'e.g. +49 123 456',
-    submitPhone: 'Submit order',
-    successMsg: 'Your order is registered. We will call you soon.'
-  },
-  tr: {
-    title: 'Taze Barbari Ekmeği',
-    price: 'Fiyat',
-    quantity: 'Miktar', pieces: 'Adet', unitPrice: 'Birim Fiyat', totalPrice: 'Toplam',
-    confirm: 'Siparişi Onayla',
-    availableToday: 'Bugün mevcut',
-    phoneTitle: 'Telefon numarası girin',
-    phoneDesc: 'Onay için sizi arayacağız.',
-    phonePlaceholder: 'ör. +49 123 456',
-    submitPhone: 'Siparişi gönder',
-    successMsg: 'Siparişiniz alındı. Yakında sizi arayacağız.'
-  },
-  fa: {
-    title: 'نان بربری تازه',
-    price: 'قیمت',
-    quantity: 'تعداد', pieces: 'عدد', unitPrice: 'قیمت واحد', totalPrice: 'مجموع',
-    confirm: 'تأیید سفارش',
-    availableToday: 'امروز موجود',
-    phoneTitle: 'شماره تلفن را وارد کنید',
-    phoneDesc: 'برای تأیید با شما تماس می‌گیریم.',
-    phonePlaceholder: 'مثلاً +49 123 456',
-    submitPhone: 'ثبت سفارش',
-    successMsg: 'سفارش شما ثبت شد. به‌زودی تماس می‌گیریم.'
-  }
+// Language translations
+const translations = {
+    de: {
+        bakery: "norbrot",
+        logout: "Abmelden",
+        adminPanel: "Admin Panel",
+
+        // Registration
+        registration: "Registrierung bei der Bäckerei",
+        registrationSubtitle: "Registrieren Sie sich, um Barbari-Brot zu bestellen",
+        personalInfo: "Persönliche Informationen",
+        firstName: "Vorname",
+        lastName: "Nachname",
+        phone: "Telefonnummer",
+        addressInfo: "Adressinformationen Deutschland",
+        street: "Straßenname",
+        houseNumber: "Hausnummer",
+        apartment: "Wohnung/Einheit (optional)",
+        postalCode: "Postleitzahl (PLZ)",
+        city: "Stadt",
+        state: "Bundesland",
+        selectState: "Bundesland auswählen",
+        registerButton: "Registrieren und Anmelden",
+
+        // Products
+        freshBread: "Frisches Barbari-Brot",
+        price: "Preis",
+        quantity: "Anzahl",
+        confirmOrder: "Bestellung bestätigen",
+        total: "Gesamt",
+
+        // Features
+        featureFresh: "Frisch gebacken",
+        featureNatural: "Natürliche Zutaten",
+        featureFast: "Schnelle Lieferung",
+        featurePayment: "Bezahlung bei Lieferung",
+        featureHandmade: "Handgemacht, knusprig außen – weich innen",
+        featureNoAdditives: "Ohne Zusatzstoffe",
+        featureAvailable: "Heute verfügbar",
+        
+        // Trust badges
+        trustFresh: "Frisch gebacken",
+        trustNatural: "Natürliche Zutaten", 
+        trustFast: "Schnelle Lieferung",
+        trustPayment: "Bezahlung bei Lieferung",
+        
+        // Product details
+        priceLabel: "Preis:",
+        availableToday: "Heute verfügbar",
+        handmade: "Handgemacht, knusprig außen – weich innen",
+        noAdditives: "Ohne Zusatzstoffe",
+        ovenFresh: "Ofenfrisch am selben Tag",
+        paymentOnDelivery: "Bezahlung bei Lieferung",
+        
+        // Additional elements
+        confirmOrder: "Bestellung bestätigen",
+        new: "Neu",
+        total: "Gesamt:",
+        quantity: "Anzahl:",
+        
+        // Phone modal
+        phoneModalTitle: "Telefonnummer eingeben",
+        phoneModalDesc: "Wir rufen Sie zur Bestätigung an.",
+        phonePlaceholder: "z.B. +49 123 456",
+        phoneSubmit: "Bestellung absenden",
+        
+        // Success message
+        orderSuccess: "Ihre Bestellung wurde registriert. Wir rufen Sie bald an.",
+
+        // Modal
+        orderConfirmed: "Bestellung bestätigt!",
+        product: "Produkt",
+        pieces: "Stück",
+        unitPrice: "Einzelpreis",
+        totalPrice: "Gesamtpreis",
+        paymentInfo: "Die Zahlung erfolgt bar bei der Lieferung.",
+        close: "Schließen",
+
+        // Messages
+        registrationSuccess: "Registrierung erfolgreich! Sie werden angemeldet...",
+        logoutSuccess: "Erfolgreich abgemeldet",
+        languageChanged: "Sprache gewechselt zu: Deutsch"
+    },
+
+    fa: {
+        bakery: "norbrot",
+        logout: "خروج",
+        adminPanel: "پنل مدیریت",
+
+        registration: "ثبت نام در نانوایی",
+        registrationSubtitle: "برای سفارش نان بربری ثبت نام کنید",
+        personalInfo: "اطلاعات شخصی",
+        firstName: "نام",
+        lastName: "نام خانوادگی",
+        phone: "شماره تلفن",
+        addressInfo: "اطلاعات آدرس آلمان",
+        street: "نام خیابان",
+        houseNumber: "شماره خانه",
+        apartment: "واحد/آپارتمان (اختیاری)",
+        postalCode: "کد پستی (PLZ)",
+        city: "شهر",
+        state: "ایالت",
+        selectState: "انتخاب ایالت",
+        registerButton: "ثبت نام و ورود",
+
+        freshBread: "نان بربری تازه",
+        price: "قیمت",
+        quantity: "تعداد",
+        confirmOrder: "تایید سفارش",
+        total: "مجموع",
+
+        featureFresh: "تازه پخته شده",
+        featureNatural: "مواد اولیه طبیعی",
+        featureFast: "تحویل سریع",
+        featurePayment: "پرداخت هنگام تحویل",
+        featureHandmade: "دستی پخته شده، بیرون ترد - داخل نرم",
+        featureNoAdditives: "بدون مواد افزودنی",
+        featureAvailable: "امروز موجود",
+        
+        // Trust badges
+        trustFresh: "تازه پخته شده",
+        trustNatural: "مواد اولیه طبیعی",
+        trustFast: "تحویل سریع", 
+        trustPayment: "پرداخت هنگام تحویل",
+        
+        // Product details
+        priceLabel: "قیمت:",
+        availableToday: "امروز موجود",
+        handmade: "دستی پخته شده، بیرون ترد - داخل نرم",
+        noAdditives: "بدون مواد افزودنی",
+        ovenFresh: "تازه از فر در همان روز",
+        paymentOnDelivery: "پرداخت هنگام تحویل",
+        
+        // Additional elements
+        confirmOrder: "تایید سفارش",
+        new: "جدید",
+        total: "مجموع:",
+        quantity: "تعداد:",
+        
+        // Phone modal
+        phoneModalTitle: "شماره تلفن را وارد کنید",
+        phoneModalDesc: "ما برای تایید با شما تماس می‌گیریم.",
+        phonePlaceholder: "مثال: +49 123 456",
+        phoneSubmit: "ارسال سفارش",
+        
+        // Success message
+        orderSuccess: "سفارش شما ثبت شد. به زودی با شما تماس می‌گیریم.",
+
+        orderConfirmed: "سفارش شما تایید شد!",
+        product: "محصول",
+        pieces: "عدد",
+        unitPrice: "قیمت واحد",
+        totalPrice: "مجموع",
+        paymentInfo: "پرداخت به صورت نقدی در زمان تحویل انجام خواهد شد.",
+        close: "بستن",
+
+        registrationSuccess: "ثبت نام موفقیت آمیز بود! در حال ورود...",
+        logoutSuccess: "خروج موفقیت آمیز بود",
+        languageChanged: "زبان تغییر کرد به: فارسی"
+    },
+
+    en: {
+        bakery: "norbrot",
+        logout: "Logout",
+        adminPanel: "Admin Panel",
+
+        registration: "Bakery Registration",
+        registrationSubtitle: "Register to order Barbari bread",
+        personalInfo: "Personal Information",
+        firstName: "First Name",
+        lastName: "Last Name",
+        phone: "Phone Number",
+        addressInfo: "German Address Information",
+        street: "Street Name",
+        houseNumber: "House Number",
+        apartment: "Apartment/Unit (optional)",
+        postalCode: "Postal Code (PLZ)",
+        city: "City",
+        state: "State",
+        selectState: "Select State",
+        registerButton: "Register and Login",
+
+        freshBread: "Fresh Barbari Bread",
+        price: "Price",
+        quantity: "Quantity",
+        confirmOrder: "Confirm Order",
+        total: "Total",
+
+        featureFresh: "Freshly baked",
+        featureNatural: "Natural ingredients",
+        featureFast: "Fast delivery",
+        featurePayment: "Payment upon delivery",
+        featureHandmade: "Handmade, crispy outside – soft inside",
+        featureNoAdditives: "Without additives",
+        featureAvailable: "Available today",
+        
+        // Trust badges
+        trustFresh: "Freshly baked",
+        trustNatural: "Natural ingredients",
+        trustFast: "Fast delivery",
+        trustPayment: "Payment upon delivery",
+        
+        // Product details
+        priceLabel: "Price:",
+        availableToday: "Available today",
+        handmade: "Handmade, crispy outside – soft inside",
+        noAdditives: "Without additives",
+        ovenFresh: "Oven-fresh on the same day",
+        paymentOnDelivery: "Payment upon delivery",
+        
+        // Additional elements
+        confirmOrder: "Confirm Order",
+        new: "New",
+        total: "Total:",
+        quantity: "Quantity:",
+        
+        // Phone modal
+        phoneModalTitle: "Enter Phone Number",
+        phoneModalDesc: "We will call you for confirmation.",
+        phonePlaceholder: "e.g. +49 123 456",
+        phoneSubmit: "Submit Order",
+        
+        // Success message
+        orderSuccess: "Your order has been registered. We will call you soon.",
+
+        orderConfirmed: "Order Confirmed!",
+        product: "Product",
+        pieces: "Pieces",
+        unitPrice: "Unit Price",
+        totalPrice: "Total Price",
+        paymentInfo: "Payment will be made in cash upon delivery.",
+        close: "Close",
+
+        registrationSuccess: "Registration successful! Logging in...",
+        logoutSuccess: "Successfully logged out",
+        languageChanged: "Language changed to: English"
+    },
+
+    tr: {
+        bakery: "norbrot",
+        logout: "Çıkış",
+        adminPanel: "Admin Paneli",
+
+        registration: "Fırına Kayıt",
+        registrationSubtitle: "Barbari ekmeği sipariş etmek için kayıt olun",
+        personalInfo: "Kişisel Bilgiler",
+        firstName: "Ad",
+        lastName: "Soyad",
+        phone: "Telefon Numarası",
+        addressInfo: "Almanya Adres Bilgileri",
+        street: "Sokak Adı",
+        houseNumber: "Ev Numarası",
+        apartment: "Daire/Birim (isteğe bağlı)",
+        postalCode: "Posta Kodu (PLZ)",
+        city: "Şehir",
+        state: "Eyalet",
+        selectState: "Eyalet Seçin",
+        registerButton: "Kayıt Ol ve Giriş Yap",
+
+        freshBread: "Taze Barbari Ekmeği",
+        price: "Fiyat",
+        quantity: "Miktar",
+        confirmOrder: "Siparişi Onayla",
+        total: "Toplam",
+
+        featureFresh: "Taze pişmiş",
+        featureNatural: "Doğal malzemeler",
+        featureFast: "Hızlı teslimat",
+        featurePayment: "Teslimatta ödeme",
+        featureHandmade: "El yapımı, dışı çıtır – içi yumuşak",
+        featureNoAdditives: "Katkı maddesi yok",
+        featureAvailable: "Bugün mevcut",
+        
+        // Trust badges
+        trustFresh: "Taze pişmiş",
+        trustNatural: "Doğal malzemeler",
+        trustFast: "Hızlı teslimat",
+        trustPayment: "Teslimatta ödeme",
+        
+        // Product details
+        priceLabel: "Fiyat:",
+        availableToday: "Bugün mevcut",
+        handmade: "El yapımı, dışı çıtır – içi yumuşak",
+        noAdditives: "Katkı maddesi yok",
+        ovenFresh: "Aynı gün fırından taze",
+        paymentOnDelivery: "Teslimatta ödeme",
+        
+        // Additional elements
+        confirmOrder: "Siparişi Onayla",
+        new: "Yeni",
+        total: "Toplam:",
+        quantity: "Miktar:",
+        
+        // Phone modal
+        phoneModalTitle: "Telefon Numarası Girin",
+        phoneModalDesc: "Onay için sizi arayacağız.",
+        phonePlaceholder: "örn. +49 123 456",
+        phoneSubmit: "Siparişi Gönder",
+        
+        // Success message
+        orderSuccess: "Siparişiniz kaydedildi. Yakında sizi arayacağız.",
+
+        orderConfirmed: "Sipariş Onaylandı!",
+        product: "Ürün",
+        pieces: "Adet",
+        unitPrice: "Birim Fiyat",
+        totalPrice: "Toplam Fiyat",
+        paymentInfo: "Ödeme teslimat sırasında nakit olarak yapılacaktır.",
+        close: "Kapat",
+
+        registrationSuccess: "Kayıt başarılı! Giriş yapılıyor...",
+        logoutSuccess: "Başarıyla çıkış yapıldı",
+        languageChanged: "Dil değiştirildi: Türkçe"
+    }
 };
 
-function applyLanguage(lang){
-  const t = (window.translations && window.translations[lang]) || window.translations.de;
-  // Title
-  const pageTitle = document.querySelector('.page-title');
-  if (pageTitle) pageTitle.textContent = t.title;
-  // Price label
-  const priceLabel = document.querySelector('.product-price-large');
-  if (priceLabel) priceLabel.textContent = `${t.price}: 3,50 €`;
-  // Stock / available chip
-  const stockChip = document.querySelector('.stock-chip');
-  if (stockChip) stockChip.innerHTML = `<i class="fas fa-check"></i> ${t.availableToday || ''}`;
-  // Quantity label
-  const qLabel = document.querySelector('.quantity-label-large');
-  if (qLabel) qLabel.textContent = `${t.quantity}:`;
-  // Confirm button
-  const confirmBtn = document.querySelector('.order-btn-large');
-  if (confirmBtn) confirmBtn.innerHTML = `<i class="fas fa-check-circle"></i> ${t.confirm}`;
-  // Modal texts
-  const phoneTitle = document.querySelector('#phoneModal .success-title');
-  if (phoneTitle) phoneTitle.textContent = t.phoneTitle;
-  const phoneDesc = document.querySelector('#phoneModal p');
-  if (phoneDesc) phoneDesc.textContent = t.phoneDesc;
-  const phoneInput = document.getElementById('phoneInput');
-  if (phoneInput) phoneInput.placeholder = t.phonePlaceholder;
-  const submitPhoneBtn = document.querySelector('#phoneModal .order-btn-large');
-  if (submitPhoneBtn) submitPhoneBtn.innerHTML = `<i class="fas fa-check"></i> ${t.submitPhone}`;
-}
-
-function switchLanguage(lang){
-  try{
+// Switch language function (بدون تغییر)
+function switchLanguage(lang) {
     localStorage.setItem('selectedLanguage', lang);
     document.documentElement.lang = lang;
-    document.documentElement.dir = (lang==='fa') ? 'rtl' : 'ltr';
-    // active button
-    document.querySelectorAll('.lang-btn').forEach(b=>{
-      b.classList.toggle('active', b.getAttribute('data-lang')===lang);
+    document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+    updatePageText(lang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+        }
     });
-    applyLanguage(lang);
-  }catch(_){applyLanguage('de');}
+    showNotification(translations[lang].languageChanged);
 }
 
-document.addEventListener('DOMContentLoaded', function(){
-  const saved = localStorage.getItem('selectedLanguage') || 'de';
-  applyLanguage(saved);
-  document.querySelectorAll('.lang-btn').forEach(btn=>{
-    btn.addEventListener('click', function(){ switchLanguage(this.getAttribute('data-lang')); });
-  });
-});
+function updatePageText(lang) {
+    const t = translations[lang];
 
-window.switchLanguage = switchLanguage;
-window.applyLanguage = applyLanguage;
+    // Features
+    document.querySelectorAll('.feature-fresh').forEach(el => el.textContent = t.featureFresh);
+    document.querySelectorAll('.feature-natural').forEach(el => el.textContent = t.featureNatural);
+    document.querySelectorAll('.feature-fast').forEach(el => el.textContent = t.featureFast);
+    document.querySelectorAll('.feature-payment').forEach(el => el.textContent = t.featurePayment);
+    document.querySelectorAll('.feature-handmade').forEach(el => el.textContent = t.featureHandmade);
+    document.querySelectorAll('.feature-noadditives').forEach(el => el.textContent = t.featureNoAdditives);
+    document.querySelectorAll('.feature-available').forEach(el => el.textContent = t.featureAvailable);
 
+    // Trust badges
+    document.querySelectorAll('.trust-fresh').forEach(el => el.textContent = t.trustFresh);
+    document.querySelectorAll('.trust-natural').forEach(el => el.textContent = t.trustNatural);
+    document.querySelectorAll('.trust-fast').forEach(el => el.textContent = t.trustFast);
+    document.querySelectorAll('.trust-payment').forEach(el => el.textContent = t.trustPayment);
+
+    // Product details
+    document.querySelectorAll('.price-label').forEach(el => el.textContent = t.priceLabel);
+    document.querySelectorAll('.available-today').forEach(el => el.textContent = t.availableToday);
+    document.querySelectorAll('.handmade').forEach(el => el.textContent = t.handmade);
+    document.querySelectorAll('.no-additives').forEach(el => el.textContent = t.noAdditives);
+    document.querySelectorAll('.oven-fresh').forEach(el => el.textContent = t.ovenFresh);
+    document.querySelectorAll('.payment-on-delivery').forEach(el => el.textContent = t.paymentOnDelivery);
+
+    // Additional elements
+    document.querySelectorAll('.confirm-order').forEach(el => el.textContent = t.confirmOrder);
+    document.querySelectorAll('.new').forEach(el => el.textContent = t.new);
+    document.querySelectorAll('.total').forEach(el => el.textContent = t.total);
+    document.querySelectorAll('.quantity').forEach(el => el.textContent = t.quantity);
+
+    // Phone modal
+    document.querySelectorAll('.phone-modal-title').forEach(el => el.textContent = t.phoneModalTitle);
+    document.querySelectorAll('.phone-modal-desc').forEach(el => el.textContent = t.phoneModalDesc);
+    document.querySelectorAll('.phone-input').forEach(el => el.placeholder = t.phonePlaceholder);
+    document.querySelectorAll('.phone-submit').forEach(el => el.textContent = t.phoneSubmit);
+
+    // Success message
+    window.orderSuccessMessage = t.orderSuccess;
+
+    // سایر بخش‌ها مثل قبل (title, price, order button …)
+}
