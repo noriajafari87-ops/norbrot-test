@@ -47,8 +47,9 @@ const translations = {
         // Product details
         priceLabel: "Preis:",
         availableToday: "Heute verfügbar",
-        handmade: "Handgemacht, knusprig außen – weich innen",
-        noAdditives: "Ohne Zusatzstoffe",
+        handmade: " Frisches, traditionelles Brot, täglich gebacken",
+        bakingSchedule: " Backtage: Samstag, Sonntag, Montag und Dienstag",
+        noAdditives: " Ohne Zusatzstoffe – gesund und nahrhaft für die Familie",
         ovenFresh: "Ofenfrisch am selben Tag",
         paymentOnDelivery: "Bezahlung bei Lieferung",
         
@@ -113,8 +114,9 @@ const translations = {
         featureNatural: "مواد اولیه طبیعی",
         featureFast: "تحویل سریع",
         featurePayment: "پرداخت هنگام تحویل",
-        featureHandmade: "دستی پخته شده، بیرون ترد - داخل نرم",
-        featureNoAdditives: "بدون مواد افزودنی",
+        featureHandmade: " Frisches, traditionelles Brot, täglich gebacken",
+        featureBakingSchedule: " Backtage: Samstag, Sonntag, Montag und Dienstag",
+        featureNoAdditives: " Ohne Zusatzstoffe – gesund und nahrhaft für die Familie",
         featureAvailable: "امروز موجود",
         
         // Trust badges
@@ -126,8 +128,9 @@ const translations = {
         // Product details
         priceLabel: "قیمت:",
         availableToday: "امروز موجود",
-        handmade: "دستی پخته شده، بیرون ترد - داخل نرم",
-        noAdditives: "بدون مواد افزودنی",
+        handmade: " نان محلی تازه، پخت روزانه",
+        bakingSchedule: " روزهای پخت: شنبه، یک‌شنبه، دوشنبه و سه‌شنبه",
+        noAdditives: " بدون مواد افزودنی، سالم و مقوی برای خانواده",
         ovenFresh: "تازه از فر در همان روز",
         paymentOnDelivery: "پرداخت هنگام تحویل",
         
@@ -190,8 +193,9 @@ const translations = {
         featureNatural: "Natural ingredients",
         featureFast: "Fast delivery",
         featurePayment: "Payment upon delivery",
-        featureHandmade: "Handmade, crispy outside – soft inside",
-        featureNoAdditives: "Without additives",
+        featureHandmade: " Fresh, traditional bread – baked daily",
+        featureBakingSchedule: " Baking days: Saturday, Sunday, Monday and Tuesday",
+        featureNoAdditives: " No additives – healthy and nutritious for the family",
         featureAvailable: "Available today",
         
         // Trust badges
@@ -203,8 +207,9 @@ const translations = {
         // Product details
         priceLabel: "Price:",
         availableToday: "Available today",
-        handmade: "Handmade, crispy outside – soft inside",
-        noAdditives: "Without additives",
+        handmade: "Fresh, traditional bread – baked daily",
+        bakingSchedule: "Baking days: Saturday, Sunday, Monday and Tuesday",
+        noAdditives: "No additives – healthy and nutritious for the family",
         ovenFresh: "Oven-fresh on the same day",
         paymentOnDelivery: "Payment upon delivery",
         
@@ -267,8 +272,9 @@ const translations = {
         featureNatural: "Doğal malzemeler",
         featureFast: "Hızlı teslimat",
         featurePayment: "Teslimatta ödeme",
-        featureHandmade: "El yapımı, dışı çıtır – içi yumuşak",
-        featureNoAdditives: "Katkı maddesi yok",
+        featureHandmade: " Taze, geleneksel ekmek – her gün fırından",
+        featureBakingSchedule: " Pişirme günleri: Cumartesi, Pazar, Pazartesi ve Salı",
+        featureNoAdditives: " Katkı yok – aile için sağlıklı ve besleyici",
         featureAvailable: "Bugün mevcut",
         
         // Trust badges
@@ -280,8 +286,9 @@ const translations = {
         // Product details
         priceLabel: "Fiyat:",
         availableToday: "Bugün mevcut",
-        handmade: "El yapımı, dışı çıtır – içi yumuşak",
-        noAdditives: "Katkı maddesi yok",
+        handmade: "Taze, geleneksel ekmek – her gün fırından",
+        bakingSchedule: "Pişirme günleri: Cumartesi, Pazar, Pazartesi ve Salı",
+        noAdditives: "Katkı yok – aile için sağlıklı ve besleyici",
         ovenFresh: "Aynı gün fırından taze",
         paymentOnDelivery: "Teslimatta ödeme",
         
@@ -351,6 +358,7 @@ function updatePageText(lang) {
     document.querySelectorAll('.price-label').forEach(el => el.textContent = t.priceLabel);
     document.querySelectorAll('.available-today').forEach(el => el.textContent = t.availableToday);
     document.querySelectorAll('.handmade').forEach(el => el.textContent = t.handmade);
+    document.querySelectorAll('.baking-schedule').forEach(el => el.textContent = t.bakingSchedule);
     document.querySelectorAll('.no-additives').forEach(el => el.textContent = t.noAdditives);
     document.querySelectorAll('.oven-fresh').forEach(el => el.textContent = t.ovenFresh);
     document.querySelectorAll('.payment-on-delivery').forEach(el => el.textContent = t.paymentOnDelivery);

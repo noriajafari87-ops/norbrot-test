@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load saved language on page load - wait for DOM to be ready
     setTimeout(() => {
-        const savedLanguage = localStorage.getItem('selectedLanguage') || 'de';
+        const savedLanguage = localStorage.getItem('selectedLanguage') || 'fa';
         if (typeof switchLanguage === 'function') {
             switchLanguage(savedLanguage);
         }
