@@ -15,30 +15,8 @@ if (hamburger && navMenu) {
     }));
 }
 
-// Check authentication status and update navigation
-function checkAuthStatus() {
-    fetch('/api/auth/status', {
-        credentials: 'include'
-    })
-    .then(response => response.json())
-    .then(data => {
-        const authLink = document.getElementById('authLink');
-        const profileLink = document.getElementById('profileLink');
-        
-        if (data.authenticated) {
-            // User is logged in
-            if (authLink) authLink.style.display = 'none';
-            if (profileLink) profileLink.style.display = 'block';
-        } else {
-            // User is not logged in
-            if (authLink) authLink.style.display = 'block';
-            if (profileLink) profileLink.style.display = 'none';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking auth status:', error);
-    });
-}
+// Auth removed: no status checks needed
+function checkAuthStatus() { /* no-op */ }
 
 // Smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -180,55 +158,46 @@ function proceedToCheckout() {
     window.location.href = 'payment.html';
 }
 
-// Check admin status function
-function checkAdminStatus() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const adminPanelBtn = document.getElementById('adminPanelBtn');
-    
-    console.log('Checking admin status for user:', user);
-    
-    // Check for both English and Persian versions of the name
-    if ((user.firstName === 'Azizollah' && user.lastName === 'Payandeh') || 
-        (user.firstName === 'عزیزالله' && user.lastName === 'پاینده')) {
-        if (adminPanelBtn) {
-            adminPanelBtn.style.display = 'block';
-            console.log('Admin panel button shown');
-        }
-    } else {
-        if (adminPanelBtn) {
-            adminPanelBtn.style.display = 'none';
-            console.log('Admin panel button hidden');
-        }
-    }
-}
+// Admin gating removed
+function checkAdminStatus() { /* no-op */ }
 
-// Logout function
-function logout() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    showNotification('Erfolgreich abgemeldet');
-    setTimeout(() => {
-        window.location.href = 'auth.html';
-    }, 1000);
+// Logout removed
+function logout() { /* no-op */ }
+
+// Ensure main image loads with multiple fallbacks
+function loadMainImageWithFallbacks() {
+    const img = document.getElementById('mainImage');
+    if (!img) return;
+
+    const raw = (img.getAttribute('data-candidates') || '').split(',').map(function(s){ return s.trim(); }).filter(function(s){ return !!s; });
+    // Ensure current src is first in the list
+    var candidates = [];
+    var currentSrc = img.getAttribute('src');
+    if (currentSrc) candidates.push(currentSrc);
+    raw.forEach(function(url){ if (candidates.indexOf(url) === -1) candidates.push(url); });
+
+    var index = 0;
+    function tryNext() {
+        if (index >= candidates.length) return;
+        var next = candidates[index++];
+        var test = new Image();
+        test.onload = function(){ img.src = next; };
+        test.onerror = function(){ tryNext(); };
+        test.src = next;
+    }
+
+    img.addEventListener('error', function(){ tryNext(); }, { once: true });
+
+    // Validate current src in case error event already missed due to cache
+    var verifier = new Image();
+    verifier.onload = function(){};
+    verifier.onerror = function(){ tryNext(); };
+    if (currentSrc) verifier.src = currentSrc;
 }
 
 // Initialize page-specific functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in (permanent session)
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('user');
-    
-    if (token && user) {
-        // User is already logged in, redirect to products page
-        if (window.location.pathname.includes('auth.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/index.html')) {
-            window.location.href = 'products.html';
-        }
-    } else {
-        // User is not logged in, redirect to auth page
-        if (window.location.pathname.includes('/dist/products')) { // legacy path
-            window.location.href = 'index.html';
-        }
-    }
+    // Auth redirects removed
     
     // Check authentication status on page load
     checkAuthStatus();
@@ -291,6 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.includes('checkout.html')) {
         loadCheckoutData();
     }
+    // Ensure main image loads (with fallbacks if needed)
+    try { loadMainImageWithFallbacks(); } catch (e) { /* ignore */ }
 });
 
 // Load checkout data

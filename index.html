@@ -33,7 +33,11 @@
         <div class="gallery card-3d image-elevated">
           <span class="ribbon ribbon-new"><i class="fas fa-star"></i> <span class="new">Neu</span></span>
           <div class="gallery-main">
-            <img id="mainImage" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Barbari-Brot" class="gallery-img"/>
+            <img id="mainImage"
+                 src="Image/Non.jpg"
+                 data-candidates="Image/Non.jpg,./Image/Non.jpg,/Image/Non.jpg,image/Non.jpg,Image/non.jpg,Non.jpg,./Non.jpg,/Non.jpg,https://via.placeholder.com/1200x800.png?text=Bread"
+                 loading="eager"
+                 alt="Barbari-Brot" class="gallery-img"/>
             <span class="shine"></span>
           </div>
         </div>
@@ -41,7 +45,7 @@
         <!-- Right: Order Panel -->
         <div class="order-panel details-glass">
           <div class="order-header-ui">
-            <div class="price-chip"><span class="price-label">Preis:</span> <strong>3,50 €</strong></div>
+            <div class="price-chip"><span class="price-label">Preis:</span> <strong>1,50 €</strong></div>
             <div class="stock-chip"><i class="fas fa-check"></i> <span class="available-today">Heute verfügbar</span></div>
           </div>
 
@@ -62,7 +66,7 @@
 
           <div class="total-display-large total-card">
             <span class="total-label"><span class="total">Gesamt:</span></span>
-            <span class="total-amount" id="totalAmount">3,50 €</span>
+            <span class="total-amount" id="totalAmount">1,50 €</span>
           </div>
 
           <button class="order-btn-large cta-pulse" onclick="openPhoneModal()">
@@ -95,7 +99,7 @@
 
   <script>
     let currentQuantity = 1;
-    const breadPrice = 3.50;
+    const breadPrice = 1.50;
 
     function increaseQuantity(){ if(currentQuantity<10){ currentQuantity++; document.getElementById('quantity').value=currentQuantity; updateTotal(); } }
     function decreaseQuantity(){ if(currentQuantity>1){ currentQuantity--; document.getElementById('quantity').value=currentQuantity; updateTotal(); } }
