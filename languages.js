@@ -24,6 +24,8 @@ const translations = {
 
         // Products
         freshBread: "Frisches Barbari-Brot",
+        whiteFlourBread: "Barbari-Brot mit weißem Mehl",
+        blackFlourBread: "Barbari-Brot mit schwarzem Mehl und Kleie",
         price: "Preis",
         quantity: "Anzahl",
         confirmOrder: "Bestellung bestätigen",
@@ -48,7 +50,7 @@ const translations = {
         priceLabel: "Preis:",
         availableToday: "Heute verfügbar",
         handmade: " Frisches, traditionelles Brot, täglich gebacken",
-        bakingSchedule: " Backtage: Samstag, Sonntag, Montag und Dienstag",
+        bakingSchedule: " Backtage: Samstag und Sonntag (11:00-13:00 Uhr)",
         noAdditives: " Ohne Zusatzstoffe – gesund und nahrhaft für die Familie",
         ovenFresh: "Ofenfrisch am selben Tag",
         paymentOnDelivery: "Bezahlung bei Lieferung",
@@ -105,6 +107,8 @@ const translations = {
         registerButton: "ثبت نام و ورود",
 
         freshBread: "نان بربری تازه",
+        whiteFlourBread: "نان بربری با آرد سفید",
+        blackFlourBread: "نان بربری با آرد سیاه و سبوس دار",
         price: "قیمت",
         quantity: "تعداد",
         confirmOrder: "تایید سفارش",
@@ -114,9 +118,9 @@ const translations = {
         featureNatural: "مواد اولیه طبیعی",
         featureFast: "تحویل سریع",
         featurePayment: "پرداخت هنگام تحویل",
-        featureHandmade: " Frisches, traditionelles Brot, täglich gebacken",
-        featureBakingSchedule: " Backtage: Samstag, Sonntag, Montag und Dienstag",
-        featureNoAdditives: " Ohne Zusatzstoffe – gesund und nahrhaft für die Familie",
+        featureHandmade: " نان محلی تازه، پخت روزانه",
+        featureBakingSchedule: " روزهای پخت: شنبه و یک‌شنبه (11:00-13:00)",
+        featureNoAdditives: " بدون مواد افزودنی، سالم و مقوی برای خانواده",
         featureAvailable: "امروز موجود",
         
         // Trust badges
@@ -129,7 +133,7 @@ const translations = {
         priceLabel: "قیمت:",
         availableToday: "امروز موجود",
         handmade: " نان محلی تازه، پخت روزانه",
-        bakingSchedule: " روزهای پخت: شنبه، یک‌شنبه، دوشنبه و سه‌شنبه",
+        bakingSchedule: " روزهای پخت: شنبه و یک‌شنبه (11:00-13:00)",
         noAdditives: " بدون مواد افزودنی، سالم و مقوی برای خانواده",
         ovenFresh: "تازه از فر در همان روز",
         paymentOnDelivery: "پرداخت هنگام تحویل",
@@ -184,6 +188,8 @@ const translations = {
         registerButton: "Register and Login",
 
         freshBread: "Fresh Barbari Bread",
+        whiteFlourBread: "Barbari Bread with White Flour",
+        blackFlourBread: "Barbari Bread with Black Flour and Bran",
         price: "Price",
         quantity: "Quantity",
         confirmOrder: "Confirm Order",
@@ -194,7 +200,7 @@ const translations = {
         featureFast: "Fast delivery",
         featurePayment: "Payment upon delivery",
         featureHandmade: " Fresh, traditional bread – baked daily",
-        featureBakingSchedule: " Baking days: Saturday, Sunday, Monday and Tuesday",
+        featureBakingSchedule: " Baking days: Saturday and Sunday (11:00-13:00)",
         featureNoAdditives: " No additives – healthy and nutritious for the family",
         featureAvailable: "Available today",
         
@@ -208,7 +214,7 @@ const translations = {
         priceLabel: "Price:",
         availableToday: "Available today",
         handmade: "Fresh, traditional bread – baked daily",
-        bakingSchedule: "Baking days: Saturday, Sunday, Monday and Tuesday",
+        bakingSchedule: "Baking days: Saturday and Sunday (11:00-13:00)",
         noAdditives: "No additives – healthy and nutritious for the family",
         ovenFresh: "Oven-fresh on the same day",
         paymentOnDelivery: "Payment upon delivery",
@@ -263,6 +269,8 @@ const translations = {
         registerButton: "Kayıt Ol ve Giriş Yap",
 
         freshBread: "Taze Barbari Ekmeği",
+        whiteFlourBread: "Beyaz Unlu Barbari Ekmeği",
+        blackFlourBread: "Siyah Unlu ve Kepekli Barbari Ekmeği",
         price: "Fiyat",
         quantity: "Miktar",
         confirmOrder: "Siparişi Onayla",
@@ -273,7 +281,7 @@ const translations = {
         featureFast: "Hızlı teslimat",
         featurePayment: "Teslimatta ödeme",
         featureHandmade: " Taze, geleneksel ekmek – her gün fırından",
-        featureBakingSchedule: " Pişirme günleri: Cumartesi, Pazar, Pazartesi ve Salı",
+        featureBakingSchedule: " Pişirme günleri: Cumartesi ve Pazar (11:00-13:00)",
         featureNoAdditives: " Katkı yok – aile için sağlıklı ve besleyici",
         featureAvailable: "Bugün mevcut",
         
@@ -287,7 +295,7 @@ const translations = {
         priceLabel: "Fiyat:",
         availableToday: "Bugün mevcut",
         handmade: "Taze, geleneksel ekmek – her gün fırından",
-        bakingSchedule: "Pişirme günleri: Cumartesi, Pazar, Pazartesi ve Salı",
+        bakingSchedule: "Pişirme günleri: Cumartesi ve Pazar (11:00-13:00)",
         noAdditives: "Katkı yok – aile için sağlıklı ve besleyici",
         ovenFresh: "Aynı gün fırından taze",
         paymentOnDelivery: "Teslimatta ödeme",
@@ -368,6 +376,10 @@ function updatePageText(lang) {
     document.querySelectorAll('.new').forEach(el => el.textContent = t.new);
     document.querySelectorAll('.total').forEach(el => el.textContent = t.total);
     document.querySelectorAll('.quantity').forEach(el => el.textContent = t.quantity);
+
+    // Product titles
+    document.querySelectorAll('.whiteFlourBread').forEach(el => el.textContent = t.whiteFlourBread);
+    document.querySelectorAll('.blackFlourBread').forEach(el => el.textContent = t.blackFlourBread);
 
     // Phone modal
     document.querySelectorAll('.phone-modal-title').forEach(el => el.textContent = t.phoneModalTitle);

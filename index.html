@@ -28,51 +28,117 @@
 
   <section class="product-page elderly-friendly page-decor">
     <div class="container">
-      <div class="hero-grid">
-        <!-- Left: Single Image -->
-        <div class="gallery card-3d image-elevated">
-          <span class="ribbon ribbon-new"><i class="fas fa-star"></i> <span class="new">Neu</span></span>
-          <div class="gallery-main">
-            <img id="mainImage"
-                 src="Image/Non.jpg"
-                 data-candidates="Image/Non.jpg,./Image/Non.jpg,/Image/Non.jpg,image/Non.jpg,Image/non.jpg,Non.jpg,./Non.jpg,/Non.jpg,https://via.placeholder.com/1200x800.png?text=Bread"
-                 loading="eager"
-                 alt="Barbari-Brot" class="gallery-img"/>
-            <span class="shine"></span>
-          </div>
-        </div>
-
-        <!-- Right: Order Panel -->
-        <div class="order-panel details-glass">
-          <div class="order-header-ui">
-            <div class="price-chip"><span class="price-label">Preis:</span> <strong>1,50 €</strong></div>
-            <div class="stock-chip"><i class="fas fa-check"></i> <span class="available-today">Heute verfügbar</span></div>
-          </div>
-
-          <ul class="usp-list">
-            <li><i class="fas fa-bread-slice"></i> <span class="handmade">Handgemacht, knusprig außen – weich innen</span></li>
-            <li><i class="fas fa-calendar"></i> <span class="baking-schedule">Backtage: Samstag, Sonntag, Montag und Dienstag</span></li>
-            <li><i class="fas fa-leaf"></i> <span class="no-additives">Ohne Zusatzstoffe – gesund und nahrhaft für die Familie</span></li>
-          </ul>
-
-          <div class="quantity-section-large">
-            <label for="quantity" class="quantity-label-large"><span class="quantity">Anzahl:</span></label>
-            <div class="quantity-controls-large">
-              <button type="button" class="quantity-btn-large" onclick="decreaseQuantity()">-</button>
-              <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly class="quantity-input-large" />
-              <button type="button" class="quantity-btn-large" onclick="increaseQuantity()">+</button>
+      <div class="products-grid">
+        <!-- White Flour Barbari Bread -->
+        <div class="product-card">
+          <div class="gallery card-3d image-elevated">
+            <span class="ribbon ribbon-new"><i class="fas fa-star"></i> <span class="new">Neu</span></span>
+            <div class="gallery-main">
+              <img id="whiteBreadImage"
+                   src="Image/Non.jpg"
+                   data-candidates="Image/Non.jpg,./Image/Non.jpg,/Image/Non.jpg,image/Non.jpg,Image/non.jpg,Non.jpg,./Non.jpg,/Non.jpg,https://via.placeholder.com/1200x800.png?text=White+Bread"
+                   loading="eager"
+                   alt="Barbari-Brot mit weißem Mehl" class="gallery-img"/>
+              <span class="shine"></span>
             </div>
           </div>
 
-          <div class="total-display-large total-card">
-            <span class="total-label"><span class="total">Gesamt:</span></span>
-            <span class="total-amount" id="totalAmount">1,50 €</span>
+          <div class="order-panel details-glass">
+            <h3 class="product-title whiteFlourBread">Barbari-Brot mit weißem Mehl</h3>
+            <div class="order-header-ui">
+              <div class="price-chip"><span class="price-label">Preis:</span> <strong>1,70 €</strong></div>
+              <div class="stock-chip"><i class="fas fa-check"></i> <span class="available-today">Heute verfügbar</span></div>
+            </div>
+
+            <ul class="usp-list">
+              <li><i class="fas fa-bread-slice"></i> <span class="handmade">Handgemacht, knusprig außen – weich innen</span></li>
+              <li><i class="fas fa-calendar"></i> <span class="baking-schedule">Backtage: Samstag und Sonntag (11:00-13:00 Uhr)</span></li>
+              <li><i class="fas fa-leaf"></i> <span class="no-additives">Ohne Zusatzstoffe – gesund und nahrhaft für die Familie</span></li>
+            </ul>
+
+            <div class="quantity-section-large">
+              <label for="whiteQuantity" class="quantity-label-large"><span class="quantity">Anzahl:</span></label>
+              <div class="quantity-controls-large">
+                <button type="button" class="quantity-btn-large" onclick="decreaseWhiteQuantity()">-</button>
+                <input type="number" id="whiteQuantity" name="whiteQuantity" value="1" min="1" max="10" readonly class="quantity-input-large" />
+                <button type="button" class="quantity-btn-large" onclick="increaseWhiteQuantity()">+</button>
+              </div>
+            </div>
+
+            <div class="total-display-large total-card">
+              <span class="total-label"><span class="total">Gesamt:</span></span>
+              <span class="total-amount" id="whiteTotalAmount">1,70 €</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Black Flour Barbari Bread -->
+        <div class="product-card">
+          <div class="gallery card-3d image-elevated">
+            <span class="ribbon ribbon-new"><i class="fas fa-star"></i> <span class="new">Neu</span></span>
+            <div class="gallery-main">
+              <img id="blackBreadImage"
+                   src="Image/Non.jpg"
+                   data-candidates="Image/Non.jpg,./Image/Non.jpg,/Image/Non.jpg,image/Non.jpg,Image/non.jpg,Non.jpg,./Non.jpg,/Non.jpg,https://via.placeholder.com/1200x800.png?text=Black+Bread"
+                   loading="eager"
+                   alt="Barbari-Brot mit schwarzem Mehl und Kleie" class="gallery-img"/>
+              <span class="shine"></span>
+            </div>
           </div>
 
+          <div class="order-panel details-glass">
+            <h3 class="product-title blackFlourBread">Barbari-Brot mit schwarzem Mehl und Kleie</h3>
+            <div class="order-header-ui">
+              <div class="price-chip"><span class="price-label">Preis:</span> <strong>1,70 €</strong></div>
+              <div class="stock-chip"><i class="fas fa-check"></i> <span class="available-today">Heute verfügbar</span></div>
+            </div>
+
+            <ul class="usp-list">
+              <li><i class="fas fa-bread-slice"></i> <span class="handmade">Handgemacht, knusprig außen – weich innen</span></li>
+              <li><i class="fas fa-calendar"></i> <span class="baking-schedule">Backtage: Samstag und Sonntag (11:00-13:00 Uhr)</span></li>
+              <li><i class="fas fa-leaf"></i> <span class="no-additives">Ohne Zusatzstoffe – gesund und nahrhaft für die Familie</span></li>
+            </ul>
+
+            <div class="quantity-section-large">
+              <label for="blackQuantity" class="quantity-label-large"><span class="quantity">Anzahl:</span></label>
+              <div class="quantity-controls-large">
+                <button type="button" class="quantity-btn-large" onclick="decreaseBlackQuantity()">-</button>
+                <input type="number" id="blackQuantity" name="blackQuantity" value="1" min="1" max="10" readonly class="quantity-input-large" />
+                <button type="button" class="quantity-btn-large" onclick="increaseBlackQuantity()">+</button>
+              </div>
+            </div>
+
+            <div class="total-display-large total-card">
+              <span class="total-label"><span class="total">Gesamt:</span></span>
+              <span class="total-amount" id="blackTotalAmount">1,70 €</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Order Button Section -->
+      <div class="single-order-section">
+        <div class="order-summary-card">
+          <h3>Bestellübersicht</h3>
+          <div class="order-items">
+            <div class="order-item">
+              <span class="product-name">Barbari-Brot mit weißem Mehl</span>
+              <span class="quantity-display" id="whiteQuantityDisplay">1 Stück</span>
+              <span class="price-display" id="whitePriceDisplay">1,70 €</span>
+            </div>
+            <div class="order-item">
+              <span class="product-name">Barbari-Brot mit schwarzem Mehl und Kleie</span>
+              <span class="quantity-display" id="blackQuantityDisplay">1 Stück</span>
+              <span class="price-display" id="blackPriceDisplay">1,70 €</span>
+            </div>
+            <div class="order-total">
+              <span class="total-label">Gesamt:</span>
+              <span class="total-amount" id="grandTotalAmount">3,40 €</span>
+            </div>
+          </div>
           <button class="order-btn-large cta-pulse" onclick="openPhoneModal()">
             <i class="fas fa-check-circle"></i><span class="confirm-order">Bestellung bestätigen</span>
           </button>
-
         </div>
       </div>
 
@@ -98,33 +164,124 @@
   </div>
 
   <script>
-    let currentQuantity = 1;
-    const breadPrice = 1.50;
+    let whiteQuantity = 1;
+    let blackQuantity = 1;
+    const breadPrice = 1.70;
 
-    function increaseQuantity(){ if(currentQuantity<10){ currentQuantity++; document.getElementById('quantity').value=currentQuantity; updateTotal(); } }
-    function decreaseQuantity(){ if(currentQuantity>1){ currentQuantity--; document.getElementById('quantity').value=currentQuantity; updateTotal(); } }
-    function updateTotal(){ const total = currentQuantity * breadPrice; const el = document.getElementById('totalAmount'); if(el){ el.textContent = total.toFixed(2).replace('.', ',') + ' €'; } }
-    document.addEventListener('DOMContentLoaded', updateTotal);
+    function increaseWhiteQuantity(){ 
+      if(whiteQuantity<10){ 
+        whiteQuantity++; 
+        document.getElementById('whiteQuantity').value=whiteQuantity; 
+        updateWhiteTotal(); 
+        updateOrderSummary();
+      } 
+    }
+    
+    function decreaseWhiteQuantity(){ 
+      if(whiteQuantity>1){ 
+        whiteQuantity--; 
+        document.getElementById('whiteQuantity').value=whiteQuantity; 
+        updateWhiteTotal(); 
+        updateOrderSummary();
+      } 
+    }
+    
+    function increaseBlackQuantity(){ 
+      if(blackQuantity<10){ 
+        blackQuantity++; 
+        document.getElementById('blackQuantity').value=blackQuantity; 
+        updateBlackTotal(); 
+        updateOrderSummary();
+      } 
+    }
+    
+    function decreaseBlackQuantity(){ 
+      if(blackQuantity>1){ 
+        blackQuantity--; 
+        document.getElementById('blackQuantity').value=blackQuantity; 
+        updateBlackTotal(); 
+        updateOrderSummary();
+      } 
+    }
+    
+    function updateWhiteTotal(){ 
+      const total = whiteQuantity * breadPrice; 
+      const el = document.getElementById('whiteTotalAmount'); 
+      if(el){ el.textContent = total.toFixed(2).replace('.', ',') + ' €'; } 
+    }
+    
+    function updateBlackTotal(){ 
+      const total = blackQuantity * breadPrice; 
+      const el = document.getElementById('blackTotalAmount'); 
+      if(el){ el.textContent = total.toFixed(2).replace('.', ',') + ' €'; } 
+    }
+    
+    function updateOrderSummary(){
+      const whiteTotal = whiteQuantity * breadPrice;
+      const blackTotal = blackQuantity * breadPrice;
+      const grandTotal = whiteTotal + blackTotal;
+      
+      // Update order summary display
+      document.getElementById('whiteQuantityDisplay').textContent = `${whiteQuantity} Stück`;
+      document.getElementById('whitePriceDisplay').textContent = whiteTotal.toFixed(2).replace('.', ',') + ' €';
+      document.getElementById('blackQuantityDisplay').textContent = `${blackQuantity} Stück`;
+      document.getElementById('blackPriceDisplay').textContent = blackTotal.toFixed(2).replace('.', ',') + ' €';
+      document.getElementById('grandTotalAmount').textContent = grandTotal.toFixed(2).replace('.', ',') + ' €';
+    }
+    
+    
+    document.addEventListener('DOMContentLoaded', function(){
+      updateWhiteTotal();
+      updateBlackTotal();
+      updateOrderSummary();
+    });
 
-    function openPhoneModal(){ document.getElementById('phoneModal').style.display='block'; }
+    function openPhoneModal(){ 
+      document.getElementById('phoneModal').style.display='block'; 
+    }
     function closePhoneModal(){ document.getElementById('phoneModal').style.display='none'; }
 
     function submitQuickOrder(){
       const phone = (document.getElementById('phoneInput').value||'').trim();
       if(!phone){ alert('Bitte Telefonnummer eingeben'); return; }
-      const totalPrice = currentQuantity * breadPrice;
+      
+      // Check minimum order requirement (total of 2 breads)
+      const totalBreads = whiteQuantity + blackQuantity;
+      if(totalBreads < 2){
+        alert('Mindestbestellung: 2 Brote insgesamt');
+        return;
+      }
+      
+      // Create order data with all products
+      const whiteTotal = whiteQuantity * breadPrice;
+      const blackTotal = blackQuantity * breadPrice;
+      const grandTotal = whiteTotal + blackTotal;
+
+      const orderData = {
+        phone,
+        products: [
+          {
+            productName: 'Barbari-Brot mit weißem Mehl',
+            quantity: whiteQuantity,
+            price: breadPrice,
+            total: whiteTotal
+          },
+          {
+            productName: 'Barbari-Brot mit schwarzem Mehl und Kleie',
+            quantity: blackQuantity,
+            price: breadPrice,
+            total: blackTotal
+          }
+        ],
+        totalPrice: grandTotal,
+        totalAmount: grandTotal,
+        firstName:'Kunde'
+      };
 
       fetch('/api/order', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          phone,
-          productName:'Traditionelles Barbari-Brot',
-          quantity: currentQuantity,
-          totalPrice,
-          totalAmount: totalPrice,
-          firstName:'Kunde'
-        })
+        body: JSON.stringify(orderData)
       })
       .then(async r=>{
         const raw = await r.text();
